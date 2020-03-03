@@ -2,8 +2,6 @@ using DataFrames
 using CSV
 using Statistics
 
-df = "../data/time_series/diff/SARS.csv" |> CSV.File |> DataFrame
-
 function resample(ts, rate)
     ans = []
 
@@ -13,6 +11,8 @@ function resample(ts, rate)
 
     return ans
 end
+
+@enum Outcome survived=1 dead=2
 
 #=
 Simulates a case of infection given a K, α and R.
@@ -46,85 +46,100 @@ Simulate a case with the new model of a 3 state markov chain given an α and β.
 
 Returns a status and the
 =#
-function simulate_case_with_small_markov_chain(α::Float64, β::Float64)
+function simulate_infection(α::Float64, β::Float64)
     outcome_day = 0
     while true
         prob = rand()
         if prob < α
-            return "Dead", outcome_day
+            return dead, outcome_day
         elseif prob < α + β
-            return "Survived", outcome_day
+            return survived, outcome_day
         end
         outcome_day += 1
     end
 end
 
-function simulate_death_curve(X, simulation, simulation_params)
+function simulate_outbreak(X, simulation, simulation_params)
     T = length(X)
-
     ans = zeros(T)
 
     for (t, X_t) in enumerate(X)
         for _ in 1:X_t
             outcome, outcome_day = simulation(simulation_params...)
 
-            if outcome == "Dead"
+            if outcome == dead
                 if t + outcome_day <= T
                     ans[t + outcome_day] += 1
                 end
             end
-
-            # if outcome_day >= 0 && t + case_result <= T
-            #     death_curve[t + case_result] += 1
-            # end
         end
     end
 
     return ans
 end
 
-function mse(curves, mean_curve)
-    N = length(curves)
-    return vec(1/N .* sum((curves .- mean_curve) .^ 2, dims=1))
+simulate_outbreak_new = (X, α, β) -> simulate_outbreak(X, simulate_infection, [α, β])
+
+function mortality_rate(X, d)
+    return sum(d) / sum(X)
 end
 
-X = df.Infected
-y = df.Dead
+function mse(sample_paths, mean_sample_path)
+    N = size(sample_paths, 1)
+    return vec(1/N .* sum((sample_paths .- mean_sample_path) .^ 2, dims=1))
+end
 
-simulate_death_curve_with_small_markov_chain = (X, α, β) -> simulate_death_curve(X, simulate_case_with_small_markov_chain, [α, β])
+function optimize_parameters(X, d, α_space, β_space, nsims)
+    admissible_configurations = []
+    mortality_rates = []
 
-granularity = 0.01
+    y = mortality_rate(X, d)
+    T = length(X)
 
-α_space = granularity:granularity:1
-β_space = granularity:granularity:1
+    for α in α_space
+        for β in β_space
+            println("Checking α=$α, β=$β")
+
+            sample_paths = Array{Float64, 2}(undef, T, nsims)
+            sample_mortality_rates = Array{Float64, 1}(undef, nsims)
+
+            for i in 1:nsims
+                sample_paths[:, i] = simulate_outbreak_new(X, α, β)
+                sample_mortality_rates[i] = mortality_rate(X, sample_paths[:, i])
+            end
+
+            mean_sample_path = mean(sample_paths, dims=2)
+            sample_mses = mse(sample_paths, mean_sample_path)
+
+            low_mse, high_mse = quantile(sample_mses, [0.05, 0.95])
+            true_mse = mse(d, mean_sample_path)[1]
+
+            println("[$low_mse, $high_mse] => $true_mse")
+
+            println(quantile(sample_mortality_rates, [0.25, 0.5, 0.75]))
+
+            if low_mse <= true_mse <= high_mse
+                push!(admissible_configurations, (α, β))
+
+                push!(mortality_rates, sample_mortality_rates...)
+
+                println("Valid parameters: MSE=$true_mse")
+                println("Mortality Rate: $(mean(sample_mortality_rates)) +- $(std(sample_mortality_rates))")
+            end
+        end
+    end
+
+    return admissible_configurations, mortality_rates
+end
+
+df = "./data/time_series/diff/SARS.csv" |> CSV.File |> DataFrame
+
+X = resample(df.Infected[1:21], 2)
+d = resample(df.Dead[1:21], 2)
+
+α_space = 0.01:0.01:0.2
+β_space = 0.05:0.05:0.8
 
 nsims = 100
 
-T = length(X)
-
-valid = []
-
-for α in α_space
-    for β in β_space
-        println("Checking α=$α, β=$β")
-        simulated = Array{Float64, 2}(undef, T, nsims)
-
-        for i in 1:nsims
-            simulated[:, i] = simulate_death_curve_with_small_markov_chain(X, α, β)
-        end
-
-        mean_simulated = mean(simulated, dims=2)
-
-        mses = mse(simulated, mean_simulated)
-        lowest_mse, highest_mse = quantile(mses, [0.05, 0.95])
-
-        true_mse = mse(y, mean_simulated)[1]
-
-        println("[$lowest_mse, $highest_mse] => $true_mse")
-
-        if lowest_mse <= true_mse <= highest_mse
-            println("Valid parameters. MSE=$true_mse")
-            push!(valid_parameters, (α, β))
-        end
-    end
-end
+admissible_configurations, mortality_rates = optimize_parameters(X, d, α_space, β_space, nsims)
