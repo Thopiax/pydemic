@@ -16,7 +16,7 @@ function calculate_admissible_parameters(name, censor_end, confidence)
     df = "./data/time_series/diff/$name.csv" |> CSV.File |> DataFrame
 
     α_space = 0.01:0.01:0.1
-    p_space = 0.01:0.01:1
+    p_space = 0.05:0.05:1
 
     CI = confidence_interval(confidence)
 
@@ -26,8 +26,6 @@ function calculate_admissible_parameters(name, censor_end, confidence)
 
     # y = real death count
     true_deaths = sum(df.Dead[1:censor_end])
-    println(true_deaths)
-
 
     function build_poisson_binomial_distribution(E, α, p)
         # size of the probability vector is the total number of infected patients
