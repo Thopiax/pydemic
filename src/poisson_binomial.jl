@@ -16,7 +16,7 @@ function simulate_total_fatality_samples(E, nsamples, α, p)
         ans[:, t] = rand(D_t, nsamples)
     end
 
-    return sum(ans, dims=2)
+    return vec(sum(ans, dims=2))
 end
 
 function confidence_interval(confidence::Int)::Vector{Float64}
@@ -44,7 +44,7 @@ function calculate_admissible_parameters(name, censor_end, confidence)
             total_fatality_samples = simulate_total_fatality_samples(E, 10000, α, p)
             println("[$name] (α=$α, p=$p) Total Fatality samples: μ=$(mean(total_fatality_samples)), σ^2=$(var(total_fatality_samples))")
 
-            low_deaths, high_deaths = quantile(total_fatality_samples, CI)
+            low_deaths, high_deaths = quantile(total_fatality_samples, [0.05, 0.95])
 
             if low_deaths <= true_deaths <= high_deaths
                 println("[$name] (α=$α, p=$p) Parameters are admissible! [$low_deaths, $high_deaths]")
