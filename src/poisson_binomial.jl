@@ -2,9 +2,21 @@ using DataFrames
 using CSV
 using Distributions
 
+function daily_fatality_distribution(n, k, α, p)
+    return Binomial(n, α * (1 - (1 - p)^k))
+end
 
-function probability_patient_dies_within_k_periods(k, α, p)
-    return α * (1 - (1 - p)^k)
+function simulate_total_fatality_samples(E, nsamples, α, p)
+    T = size(E, 1)
+    ans = Array{Float64, 2}(undef, nsamples, T)
+
+    for (t, n) in enumerate(E)
+        D_t = daily_fatality_distribution(n, T - t, α, p)
+
+        ans[:, t] = rand(D_t, nsamples)
+    end
+
+    return sum(ans, dims=2)
 end
 
 function confidence_interval(confidence::Int)::Vector{Float64}
@@ -22,39 +34,17 @@ function calculate_admissible_parameters(name, censor_end, confidence)
 
     # E = epidemic curve
     E = df.Infected[1:censor_end]
-    println(E)
 
     # y = real death count
     true_deaths = sum(df.Dead[1:censor_end])
 
-    function build_poisson_binomial_distribution(E, α, p)
-        # size of the probability vector is the total number of infected patients
-        probability_vector_size = round(Int, sum(E))
-
-        probability_vector = Array{Float64, 1}(undef, probability_vector_size)
-
-        ptr = 1
-        for (t, n) in enumerate(E)
-            D_t = probability_patient_dies_within_k_periods(censor_end - t, α, p)
-
-            for i in 1:n
-                probability_vector[ptr] = D_t
-
-                ptr += 1
-            end
-        end
-
-        return PoissonBinomial(probability_vector)
-    end
-
     admissible_parameters = []
     for α in α_space
         for p in p_space
-            println("[$name] (α=$α, p=$p) Building Poisson Binomial distribution...")
-            poisson_binomial_distribution = build_poisson_binomial_distribution(E, α, p)
-            println("[$name] (α=$α, p=$p) Poisson Binomial distribution: μ=$(mean(poisson_binomial_distribution)), σ^2=$(var(poisson_binomial_distribution))")
+            total_fatality_samples = simulate_total_fatality_samples(E, 10000, α, p)
+            println("[$name] (α=$α, p=$p) Total Fatality samples: μ=$(mean(total_fatality_samples)), σ^2=$(var(total_fatality_samples))")
 
-            low_deaths, high_deaths = quantile.(poisson_binomial_distribution, CI)
+            low_deaths, high_deaths = quantile(total_fatality_samples, CI)
 
             if low_deaths <= true_deaths <= high_deaths
                 println("[$name] (α=$α, p=$p) Parameters are admissible! [$low_deaths, $high_deaths]")
