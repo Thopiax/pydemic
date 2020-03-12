@@ -134,8 +134,8 @@ end
 
 df = "./data/time_series/diff/SARS.csv" |> CSV.File |> DataFrame
 
-X = resample(df.Infected[1:21], 2)
-d = resample(df.Dead[1:21], 2)
+X = resample(df.Infected[1:15], 2)
+d = resample(df.Dead[1:15], 2)
 
 α_space = 0.01:0.01:0.2
 β_space = 0.05:0.05:0.8
