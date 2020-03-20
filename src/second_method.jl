@@ -172,10 +172,12 @@ calculate_admissible_parameters("MERS_second", 436, 90, MERS_α_space, MERS_p_sp
 
 # Coronavirus
 
-Corona_α_space = 0.01:0.005:0.1
-Corona_p_space = 0:0.05:1
+Corona_α_space = 0.01:0.001:0.1
+Corona_p_space = 0:0.01:1
 
 calculate_admissible_parameters("Coronavirus", 7, 90, Corona_α_space, Corona_p_space)
 calculate_admissible_parameters("Coronavirus", 14, 90, Corona_α_space, Corona_p_space)
 calculate_admissible_parameters("Coronavirus", 21, 90, Corona_α_space, Corona_p_space)
 calculate_admissible_parameters("Coronavirus", 29, 90, Corona_α_space, Corona_p_space)
+
+minimax_parameter_search("Coronavirus", 21, Corona_α_space, Corona_p_space, 0.2)
