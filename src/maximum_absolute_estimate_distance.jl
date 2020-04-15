@@ -8,7 +8,7 @@ function fatality_distribution(x, k, α, p)
     return Binomial(n, α * (1 - (1 - p)^k))
 end
 
-function cumulative_fatality_samples(E, nsamples, α, p)
+function fatality_trace_samples(E, nsamples, α, p)
     T = size(E, 1)
     ans = Array{Float64, 2}(undef, nsamples, T)
 
@@ -18,12 +18,46 @@ function cumulative_fatality_samples(E, nsamples, α, p)
         ans[:, t] = rand(D_t, nsamples)
     end
 
+    return ans
+end
+
+function cumulative_fatality_samples(E, nsamples, α, p)
+    ans = fatality_trace_samples(E, nsamples, α, p)
+
     return vec(sum(ans, dims=2))
 end
 
 
 function filterparams!(param_df, threshold)
     filter!(row -> row[:d] <= threshold, param_df);
+end
+
+# from https://github.com/mirkobunse/EarthMoversDistance.jl (needs citation)
+using EarthMoversDistance
+using LinearAlgebra
+using Distances
+
+function earth_movers_distance(E, X, T, nsims, α, p)
+    fatality_traces = fatality_trace_samples(E, nsims, α, p)
+
+    X_hist = LinearAlgebra.normalize(X, 1)
+
+    distances = zeros(nsims)
+
+    for (i, trace) in enumerate(eachrow(fatality_traces))
+        if sum(trace) == 0
+            return nothing
+        end
+
+        trace_hist = LinearAlgebra.normalize(trace, 1)
+
+        trace_emd = earthmovers(X_hist, trace_hist, Cityblock())
+        trace_diff = abs(sum(X) - sum(trace)) / sum(X)
+
+        distances[i] = trace_emd
+    end
+
+    return minimum(distances)
 end
 
 function max_distance(E, X, T, nsims, α, p)
@@ -59,6 +93,8 @@ function choose_metric(metric)
         return mean_distance
     elseif metric == "max"
         return max_distance
+    elseif metric == "emd"
+        return earth_movers_distance
     end
 
     # defaults to mean distance
@@ -80,7 +116,7 @@ function FFXidx(X, E)
     return size(E, 1)
 end
 
-function new_parameter_search(name, T, α_space, p_space, admissibility_window=0.1, FFX=false, nsims=10000, distance_metric="mean")
+function new_parameter_search(name, T, α_space, p_space, admissibility_window=0.1, FFX=false, distance_metric="mean", nsims=10000, verbose=true)
     df = "./data/time_series/diff/$name.csv" |> CSV.File |> DataFrame
 
     if FFX
@@ -107,10 +143,17 @@ function new_parameter_search(name, T, α_space, p_space, admissibility_window=0
         for p in p_space
             distance = choose_metric(distance_metric)(E, X, T, nsims, α, p)
 
+            # if distance is nothing then the parameters were not valid and resulted in a 0 vector.
+            if isnothing(distance)
+                continue
+            end
+
             if isnothing(minimum_distance) || distance <= minimum_distance
                 minimum_distance = distance
 
-                println("[$name] (α=$α, p=$p) New minimum distance $minimum_distance")
+                if verbose
+                    println("[$name] (α=$α, p=$p) New minimum distance $minimum_distance")
+                end
 
                 filterparams!(param_df, (1 + admissibility_window) * minimum_distance)
             end
@@ -118,28 +161,30 @@ function new_parameter_search(name, T, α_space, p_space, admissibility_window=0
             if distance <= (1 + admissibility_window) * minimum_distance
                 push!(param_df, [α, p, distance])
 
-                println("[$name] (α=$α, p=$p) Admissible Parameter
-                        distance=$(distance)
-                        threshold=$((1 + admissibility_window) * minimum_distance)
-                        size(param_df)=$(size(param_df, 1))
-                ")
+                if verbose
+                    println("[$name] (α=$α, p=$p) Admissible Parameter
+                            distance=$(distance)
+                            threshold=$((1 + admissibility_window) * minimum_distance)
+                            size(param_df)=$(size(param_df, 1))
+                    ")
+                end
             end
         end
     end
 
     println("[$name] Writing parameters to file.")
 
-    param_df |> CSV.write("./results/second_method/$(name)_$(censor_string)_$(round(Int, admissibility_window * 100))_$(distance_metric)_params.csv")
+    param_df |> CSV.write("./results/$(name)_$(censor_string)_$(round(Int, admissibility_window * 100))_$(distance_metric)_params.csv")
 
     return param_df
 end
 
 
 SARS_α_space = 0.05:0.001:0.15
-SARS_p_space = 0:0.02:1
+SARS_p_space = 0.01:0.01:1
 
-new_parameter_search("SARS", 100, SARS_α_space, SARS_p_space, 0.2, true)
-new_parameter_search("SARS", 1000, SARS_α_space, SARS_p_space, 0.2, true)
+new_parameter_search("SARS", 100, SARS_α_space, SARS_p_space, 0.2, true, "emd")
+new_parameter_search("SARS", 1000, SARS_α_space, SARS_p_space, 0.2, true, "emd")
 new_parameter_search("SARS", 5000, SARS_α_space, SARS_p_space, 0.2, true)
 new_parameter_search("SARS", 10000, SARS_α_space, SARS_p_space, 0.2, true)
 
