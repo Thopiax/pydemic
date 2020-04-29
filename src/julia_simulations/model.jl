@@ -11,6 +11,7 @@ module OutbreakModel
     end
 
     struct WeibullParameters <: Parameters
+        α::Float64
         k::Float64
         l::Float64
     end
@@ -19,7 +20,7 @@ module OutbreakModel
         return Binomial(n, params.α * (1 - (1 - params.p)^k))
     end
 
-    function fatality_weibull(params::Parameters)
+    function fatality_weibull(params::WeibullParameters)
 
     function simulate_fatality_curves(params::Parameters, epidemic_curve::Array{Int64}, nsims::Int64 = 10_000)
         T = size(epidemic_curve, 1)
@@ -37,11 +38,6 @@ module OutbreakModel
     using Distributed
     using SharedArrays
 
-    # from https://github.com/mirkobunse/EarthMoversDistance.jl (needs citation)
-    @everywhere using EarthMoversDistance
-    @everywhere using LinearAlgebra: normalize
-    @everywhere using Distances
-
     function distance_name(distance::Function)
         if distance == earth_movers_distance
             return "emd"
@@ -52,30 +48,6 @@ module OutbreakModel
         end
 
         error("Unknown distance functio")
-    end
-
-    function earth_movers_distance(fatality_curve::Array{Int64}, fatality_curve_simulations::Array{Int64, 2})
-        nsims, T = size(fatality_curve_simulations)
-
-        fatality_histogram = normalize(fatality_curve, 1)
-        cumulative_fatality_curve = cumsum(fatality_curve)
-
-        min_emd = @distributed (min) for k in 1:nsims
-            fatality_curve_sim = fatality_curve_simulations[k, :]
-
-            if sum(fatality_curve_sim) == 0
-                return NaN
-            end
-
-            simulation_histogram = normalize(fatality_curve_sim, 1)
-
-            emd = earthmovers(fatality_histogram, simulation_histogram, Cityblock())
-            penalty = abs(cumulative_fatality_curve[T] - sum(fatality_curve_sim)) / cumulative_fatality_curve[T]
-
-            emd + penalty
-        end
-
-        return min_emd
     end
 
     function max_distance(fatality_curve::Array{Int64}, fatality_curve_simulations::Array{Int64, 2})
