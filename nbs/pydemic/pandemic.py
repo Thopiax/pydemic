@@ -7,7 +7,7 @@ class Pandemic:
         self.name = name
         
         # the columns in the two timelines should mat
-        assert (epidemic_curve.columns == recovery_curve.columns).all() and (epidemic_curve.columns == recovery_curve.columns).all()
+        assert (epidemic_curve.columns == fatality_curve.columns).all() and (epidemic_curve.columns == recovery_curve.columns).all()
         
         self.epidemic_curve = epidemic_curve
         self.fatality_curve = fatality_curve
@@ -78,7 +78,7 @@ class Pandemic:
         
         regions_total_number_of_healed = self.recovery_curve[regions].sum(axis=1)[-1]
         global_total_number_of_healed = self.recovery_curve.sum(axis=1)[-1]
-
+        
         print(f"Regions: {', '.join(regions)}")
         print("Case coverage=%.2f" % ((regions_total_number_of_cases / global_total_number_of_cases) * 100))
         print("Death coverage=%.2f" % ((regions_total_number_of_deaths / global_total_number_of_deaths) * 100))
