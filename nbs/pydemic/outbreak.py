@@ -21,7 +21,7 @@ class Outbreak:
         self._smooth_epidemic_curves = {}
         self._smooth_fatality_curves = {}
         self._smooth_recovery_curves = {}
-
+        
     @property
     def duration(self):
         return self.epidemic_curve.shape[0]
@@ -54,6 +54,12 @@ class Outbreak:
     @property
     def cfr_curve(self):
         return (self.fatality_curve.cumsum(axis=0) / self.epidemic_curve.cumsum(axis=0))
+    
+    def ffx_cases(self, *xs):
+        return [np.argmax(self.cumulative_epidemic_curve > x) for x in xs]
+    
+    def ffx_deaths(self, *xs):
+        return [np.argmax(self.cumulative_fatality_curve > x) for x in xs]
 
     @staticmethod
     def load(region):
