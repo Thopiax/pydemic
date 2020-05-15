@@ -3,7 +3,7 @@ import numpy as np
 from .outbreak import Outbreak 
 
 class Pandemic:
-    def __init__(self, name, epidemic_curve, fatality_curve, recovery_curve):
+    def __init__(self, name, epidemic_curve, fatality_curve, recovery_curve=None, advanced_testing_policy_adopted=None, latest_testing_per_thousand=None):
         self.name = name
         
         # the columns in the two timelines should mat
@@ -12,6 +12,8 @@ class Pandemic:
         self.epidemic_curve = epidemic_curve
         self.fatality_curve = fatality_curve
         self.recovery_curve = recovery_curve
+        self.advanced_testing_policy_adopted = advanced_testing_policy_adopted
+        self.latest_testing_per_thousand = latest_testing_per_thousand
         
         self.convert_indices_to_timedelta_since_epidemic_start_date()
         
@@ -43,10 +45,6 @@ class Pandemic:
             result[region] = func(outbreak, *params, **kwargs)
         
         return result
-
-    def set_smoothing_coefficient(self, k):
-        for outbreak in self.outbreaks.values():
-            outbreak.smoothing_coefficient = k
     
     def build_outbreaks(self):
         first_confirmed_case_dates = self.epidemic_curve.cumsum(0).eq(0).sum().apply(lambda x: pd.Timedelta(days=x))
@@ -65,19 +63,29 @@ class Pandemic:
             region_recovery_curve = self.recovery_curve.loc[first_confirmed_case_in_region:, region]
             region_recovery_curve.index -= first_confirmed_case_in_region
             
-            self.outbreaks[region] = Outbreak(region, region_epidemic_curve, region_fatality_curve, region_recovery_curve)
+            region_advanced_testing_policy_adopted = self.advanced_testing_policy_adopted.get(region, False) if self.advanced_testing_policy_adopted is not None else None
+            region_latest_testing_per_thousand = self.latest_testing_per_thousand.get(region) if self.latest_testing_per_thousand is not None else None
+            
+            self.outbreaks[region] = Outbreak(
+                region, 
+                region_epidemic_curve, 
+                region_fatality_curve, 
+                recovery_curve=region_recovery_curve,
+                advanced_testing_policy_adopted=region_advanced_testing_policy_adopted,
+                latest_testing_per_thousand=region_latest_testing_per_thousand
+            )
     
         return True
     
     def print_regions_coverage(self, regions):
-        regions_total_number_of_cases = self.epidemic_curve[regions].sum(axis=1)[-1]
-        global_total_number_of_cases = self.epidemic_curve.sum(axis=1)[-1]
+        regions_total_number_of_cases = self.epidemic_curve[regions].cumsum(axis=0).sum(axis=1)[-1]
+        global_total_number_of_cases = self.epidemic_curve.cumsum(axis=0).sum(axis=1)[-1]
 
-        regions_total_number_of_deaths = self.fatality_curve[regions].sum(axis=1)[-1]
-        global_total_number_of_deaths = self.fatality_curve.sum(axis=1)[-1]
+        regions_total_number_of_deaths = self.fatality_curve[regions].cumsum(axis=0).sum(axis=1)[-1]
+        global_total_number_of_deaths = self.fatality_curve.cumsum(axis=0).sum(axis=1)[-1]
         
-        regions_total_number_of_healed = self.recovery_curve[regions].sum(axis=1)[-1]
-        global_total_number_of_healed = self.recovery_curve.sum(axis=1)[-1]
+        regions_total_number_of_healed = self.recovery_curve[regions].cumsum(axis=0).sum(axis=1)[-1]
+        global_total_number_of_healed = self.recovery_curve.cumsum(axis=0).sum(axis=1)[-1]
         
         print(f"Regions: {', '.join(regions)}")
         print("Case coverage=%.2f" % ((regions_total_number_of_cases / global_total_number_of_cases) * 100))
