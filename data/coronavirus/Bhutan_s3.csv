@@ -1,4 +1,5 @@
 Dates,Infected,Dead,Recovered
+1 days,0,0,0
 2 days,0,0,0
 3 days,0,0,0
 4 days,0,0,0
@@ -19,14 +20,14 @@ Dates,Infected,Dead,Recovered
 19 days,0,0,0
 20 days,0,0,0
 21 days,0,0,0
-22 days,0,0,0
-23 days,1,0,0
+22 days,1,0,0
+23 days,0,0,0
 24 days,0,0,0
 25 days,0,0,0
 26 days,0,0,0
-27 days,0,0,0
+27 days,0,0,1
 28 days,0,0,1
-29 days,0,0,1
+29 days,0,0,0
 30 days,0,0,0
 31 days,0,0,0
 32 days,0,0,0
@@ -44,13 +45,13 @@ Dates,Infected,Dead,Recovered
 44 days,0,0,0
 45 days,0,0,0
 46 days,0,0,0
-47 days,0,0,0
-48 days,1,0,0
+47 days,1,0,0
+48 days,0,0,0
 49 days,0,0,0
 50 days,0,0,0
 51 days,0,0,0
-52 days,0,0,0
-53 days,0,0,1
+52 days,0,0,1
+53 days,0,0,0
 54 days,0,0,0
 55 days,0,0,0
 56 days,0,0,0
@@ -58,3 +59,10 @@ Dates,Infected,Dead,Recovered
 58 days,0,0,0
 59 days,0,0,0
 60 days,0,0,0
+61 days,0,0,0
+62 days,0,0,0
+63 days,0,0,0
+64 days,0,0,0
+65 days,1,0,0
+66 days,1,0,0
+67 days,3,0,0
