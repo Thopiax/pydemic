@@ -1,0 +1,1 @@
+from .outbreak import Outbreak
