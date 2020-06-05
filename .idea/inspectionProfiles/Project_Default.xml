@@ -5,6 +5,17 @@
       <option name="ignoredErrors">
         <list>
           <option value="N802" />
+          <option value="N803" />
+          <option value="N806" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="fatality.population.learners.objective_function.Optional" />
+          <option value="bool.all" />
+          <option value="functools.cached_property" />
         </list>
       </option>
     </inspection_tool>

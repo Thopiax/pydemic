@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteMappingsManager">
+    <list>
+      <list>
+        <remote-mappings server-id="python@sftp://rafinha@137.117.149.52:22/anaconda/envs/myenv/bin/python">
+          <settings>
+            <list>
+              <mapping local-root="$PROJECT_DIR$/epydemic" remote-root="/home/rafinha/pydemic/epydemic" />
+            </list>
+          </settings>
+        </remote-mappings>
+      </list>
+    </list>
+  </component>
+</project>

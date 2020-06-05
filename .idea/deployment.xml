@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="rafinha@137.117.149.52:22">
+  <component name="PublishConfigData" autoUpload="Always">
     <serverData>
       <paths name="rafinha@137.117.149.52:22">
         <serverdata>
           <mappings>
-            <mapping deploy="/tmp/pycharm_project_179" local="$PROJECT_DIR$" />
+            <mapping deploy="/tmp/pycharm_project_475" local="$PROJECT_DIR$" />
           </mappings>
+          <excludedPaths>
+            <excludedPath path="~/pydemic/results" />
+            <excludedPath local="true" path="$PROJECT_DIR$/data" />
+            <excludedPath local="true" path="$PROJECT_DIR$/plots" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.cache" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.ipynb_checkpoints" />
+          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>

@@ -1,0 +1,1 @@
+from inversion.individual.models.fatality import IndividualFatalityModel

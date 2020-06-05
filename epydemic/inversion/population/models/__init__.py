@@ -1,0 +1,2 @@
+from .analytical import AnalyticalPopulationFatalityModel
+from .simulated import SimulatedPopulationFatalityModel
