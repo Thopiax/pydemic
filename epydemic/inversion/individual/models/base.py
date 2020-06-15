@@ -1,98 +1,56 @@
 from abc import ABC, abstractmethod
-from typing import Optional
-import pandas as pd
-
 import numpy as np
-import pandas as pd
-from typing import Optional, Tuple
-from scipy.stats import weibull_min
-import matplotlib.pyplot as plt
 
-from inversion.exceptions import InvalidMortalityRateException
+from epydemic.inversion.individual.exceptions import InvalidParameters
+
+from epydemic.inversion.individual.utils import build_hazard_rate
 
 
-class IndividualBaseModel(ABC):
-    def __init__(self, parameters: Optional[Tuple[float, float, float]] = (None, None, None)):
-        self.alpha = parameters[0]
-        self.beta = parameters[1]
-        self.lam = parameters[2]
+class AbstractIndividualModel(ABC):
+    parameter_dimensions = {}
+    parameter_named_tuple = None
 
-        self.K = 0
-        self.mortality_rate = np.ndarray([])
-        self.hazard_rate = np.ndarray([])
+    def __init__(self, dimensions_key: str = "relaxed", **parameters):
+        self._dimensions = self.__class__.get_dimensions(dimensions_key)
 
-        if self.none_parameters is not True:
-            self.build_model()
+        self._parameters = self.__class__.build_parameter_named_tuple(**parameters)
+        self.K = None
 
-    def build_model(self, max_ppf: int = 0.999, max_K: int = 100):
-        if self.none_parameters: raise InvalidMortalityRateException
+        self._build_model()
 
-        self.weibull_rv = weibull_min(self.beta, scale=self.lam)
-        weibull_ppf = self.weibull_rv.ppf(max_ppf)
+    @abstractmethod
+    def _build_model(self, **kwargs):
+        if self.is_valid is False:
+            raise InvalidParameters
 
-        # ppf should be defined
-        if np.isnan(weibull_ppf) or np.isinf(weibull_ppf):
-            raise InvalidMortalityRateException
+        pass
 
-        # K is the span of the distribution that covers max_ppf % of cases
-        K = int(weibull_ppf)
+    @abstractmethod
+    def describe(self):
+        if self.is_valid is False:
+            raise InvalidParameters
 
-        # K must be at most the max_K described above
-        K = min(K, max_K)
-
-        # K must be positive for the _legacy to be valid (have at least one day)
-        if K <= 0:
-            raise InvalidMortalityRateException
-
-        self.K = K
-        x = np.arange(self.K)
-
-        # construct discrete mortality rate
-        self.mortality_rate = self.weibull_rv.cdf(x + 0.5) - self.weibull_rv.cdf(x - 0.5)
-        cumulative_fatality_density = np.cumsum(self.mortality_rate)
-
-        # construct discrete hazard rate
-        self.hazard_rate = np.zeros(self.K)
-        self.hazard_rate[0] = self.mortality_rate[0]
-        self.hazard_rate[1:] = self.mortality_rate[1:] / (1 - cumulative_fatality_density[:-1])
+        pass
 
     @classmethod
-    def from_records(cls, records):
-        return pd.Series(
-            [cls(parameters=row[["alpha", "beta", "lambda"]]) for _, row in records.iterrows()],
-            index=records["region"]
-        )
+    def build_parameter_named_tuple(cls, **parameters):
+        # if no parameters were provided, return None
+        if len(parameters) == 0:
+            return None
 
-    @property
-    def none_parameters(self):
-        return self.parameters == (None, None, None)
+        return cls.parameter_named_tuple(**parameters)
 
-    @property
-    def parameters(self):
-        return self.alpha, self.beta, self.lam
+    @classmethod
+    def get_dimensions(cls, dimensions_key):
+        return cls.parameter_dimensions[dimensions_key]
 
-    @parameters.setter
-    def parameters(self, parameters: Tuple[Optional[float], Optional[float], Optional[float]]):
-        # noop if new parameters match current ones.
-        if self.parameters == parameters:
-            return
+    def is_valid(self):
+        return self._parameters is None
 
-        self.alpha, self.beta, self.lam = parameters
-        self.build_model()
+    def build_incidence_rate(self, rv):
+        x = np.arange(self.K)
 
-    def describe(self, region=None):
-        if self.weibull_rv is None:
-            raise InvalidMortalityRateException
+        incidence_rate = rv.cdf(x + 0.5) - rv.cdf(x - 0.5)
+        hazard_rate = build_hazard_rate(incidence_rate)
 
-        mean, var, skew, kurtosis = self.weibull_rv.stats(moments="mvsk")
-
-        return pd.Series(dict(
-            mean=mean,
-            median=self.weibull_rv.median(),
-            std=self.weibull_rv.std(),
-            variance=var,
-            skew=skew,
-            kurtosis=kurtosis,
-            entropy=self.weibull_rv.entropy(),
-            interval90=self.weibull_rv.interval(0.90)
-        ), name=region)
+        return incidence_rate, hazard_rate

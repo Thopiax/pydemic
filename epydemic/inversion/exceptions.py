@@ -7,5 +7,5 @@ class InvalidParametersException(Exception):
     pass
 
 
-class InvalidMortalityRateException(Exception):
+class InvalidFatalityRateException(Exception):
     pass

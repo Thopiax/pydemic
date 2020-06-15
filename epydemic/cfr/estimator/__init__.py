@@ -1,3 +1,3 @@
-from .mortality_rate import MortalityRateCFREstimator, ExpectedMortalityRateCFREstimator
+from .fatality_rate import MortalityRateCFREstimator, ExpectedMortalityRateCFREstimator
 from .naive import NaiveCFREstimator
 from .resolved import ResolvedCFREstimator, WeightedResolvedCFREstimator

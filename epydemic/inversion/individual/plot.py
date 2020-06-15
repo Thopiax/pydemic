@@ -12,13 +12,13 @@ def plot_individual_rates(model: IndividualFatalityModel, region: str, xlim_uppe
     ax.set_xlabel("Days since diagnosis (k)")
     ax.set_ylabel("Probability of death")
 
-    mortality_rate, hazard_rate = model.mortality_rate, model.hazard_rate
+    fatality_rate, hazard_rate = model.fatality_rate, model.hazard_rate
 
     xlim_upper_padding = xlim_upper - model.K
 
     if xlim_upper_padding > 0:
-        # pad mortality rate with zeros
-        mortality_rate = np.append(mortality_rate, [0 for _ in range(xlim_upper_padding)])
+        # pad fatality rate with zeros
+        fatality_rate = np.append(fatality_rate, [0 for _ in range(xlim_upper_padding)])
         # pad hazard rate with last value
         hazard_rate = np.append(hazard_rate, [hazard_rate[-1] for _ in range(xlim_upper_padding)])
 
@@ -30,7 +30,7 @@ def plot_individual_rates(model: IndividualFatalityModel, region: str, xlim_uppe
     )
     ax.add_artist(text)
 
-    plt.plot(mortality_rate, label="Mortality Rate")
+    plt.plot(fatality_rate, label="Fatality Rate")
     plt.plot(hazard_rate, label="Hazard Rate")
 
     plt.show()

@@ -2,7 +2,7 @@ from typing import Optional
 
 from epydemic.inversion.population.learner.loss import LearnerLoss, MASELearnerLoss
 from epydemic.inversion.population.models.base import PopulationFatalityModel
-from epydemic.inversion.exceptions import InvalidMortalityRateException
+from epydemic.inversion.exceptions import InvalidFatalityRateException
 
 
 class LearnerObjectiveFunction(object):
@@ -22,6 +22,6 @@ class LearnerObjectiveFunction(object):
 
             return result
 
-        except InvalidMortalityRateException:
-            # return a large penalty for parameters that lead to invalid mortality rate
+        except InvalidFatalityRateException:
+            # return a large penalty for parameters that lead to invalid fatality rate
             return 100
