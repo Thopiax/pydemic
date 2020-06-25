@@ -1,6 +1,6 @@
 import numpy as np
 
-from epydemic.inversion.population.models import AnalyticalPopulationFatalityModel
+from epydemic.inversion.population.models import AnalyticalPopulationModel
 from .base import AbstractCFREstimator
 
 
@@ -18,7 +18,7 @@ class MortalityRateCFREstimator(AbstractCFREstimator):
         if t < 0:
             t = len(self.outbreak) - t
 
-        model = AnalyticalPopulationFatalityModel(self.outbreak, verbose=False)
+        model = AnalyticalPopulationModel(self.outbreak, verbose=False)
         model.fit(dry_run=True, **kwargs)
 
         return model.individual_model.alpha
@@ -34,7 +34,7 @@ class ExpectedMortalityRateCFREstimator(AbstractCFREstimator):
         if t < 0:
             t = len(self.outbreak) - t
 
-        model = AnalyticalPopulationFatalityModel(self.outbreak, verbose=False)
+        model = AnalyticalPopulationModel(self.outbreak, verbose=False)
         model.fit(dry_run=True, **kwargs)
 
         (best_expected_alpha, _, _), _ = model.learner.best_expected_loss

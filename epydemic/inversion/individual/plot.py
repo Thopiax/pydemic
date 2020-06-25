@@ -2,10 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import AnchoredText
 
-from inversion.individual import IndividualFatalityModel
+from epydemic.inversion.individual import BaseIndividualModel
+from epydemic.utils.decorators import save_figure
 
 
-def plot_individual_rates(model: IndividualFatalityModel, region: str, xlim_upper: int = 20):
+def plot_individual_rates(model: BaseIndividualModel, region: str, xlim_upper: int = 20):
     ax = plt.gca()
 
     ax.set_title(f"{region} - Individual Rates")
@@ -25,7 +26,7 @@ def plot_individual_rates(model: IndividualFatalityModel, region: str, xlim_uppe
     ax.set_xlim(0, xlim_upper)
 
     text = AnchoredText(
-        f"alpha={model.alpha:.3}\nbeta={model.beta:.3}\nlambda={model.lam:.3}",
+        f"alpha={model.alpha:.3}\nbeta={model.beta:.3}\neta={model.eta:.3}",
         loc="upper center"
     )
     ax.add_artist(text)

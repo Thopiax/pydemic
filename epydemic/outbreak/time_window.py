@@ -2,7 +2,7 @@ import pandas as pd
 
 from typing import Optional, Union
 
-from outbreak.exceptions import InvalidWindowBurnInException, InvalidWindowStartException, InvalidWindowEndException
+from .exceptions import InvalidWindowBurnInException, InvalidWindowStartException, InvalidWindowEndException
 
 
 class OutbreakTimeWindow:
@@ -41,11 +41,17 @@ class OutbreakTimeWindow:
     def __len__(self):
         return self.end - self.start
 
-    # return any outbreak Series attribute (e.g. cases) within the window frame.
+    def __getitem__(self, item):
+        return self._retrieve_item_from_outbreak(item)
+
     def __getattr__(self, item):
+        return self._retrieve_item_from_outbreak(item)
+
+    def _retrieve_item_from_outbreak(self, item):
         if hasattr(self.outbreak, item):
             attr = getattr(self.outbreak, item)
 
+            # return any outbreak Series attribute (e.g. cases) within the window frame.
             if type(attr) is pd.Series:
                 return attr.iloc[self.start:self.end]
 

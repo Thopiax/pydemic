@@ -19,7 +19,7 @@ def _ffx_index(cumulative_x, threshold):
 
 
 class Outbreak:
-    def __init__(self, region: str, cases: pd.Series, deaths: pd.Series, recoveries: Optional[pd.Series] = None,
+    def __init__(self, region: str, cases: pd.Series, deaths: pd.Series, recoveries: pd.Series,
                  smoothing_window: int = 3, **data):
         self.region = region
 
@@ -32,16 +32,16 @@ class Outbreak:
         self.cumulative_deaths = self.deaths.cumsum()
 
         self.recoveries = recoveries
-        if self.recoveries is not None:
-            self.recoveries.name = region
-            self.cumulative_recoveries = self.recoveries.cumsum()
+        self.recoveries.name = region
+        self.cumulative_recoveries = self.recoveries.cumsum()
 
         self.smoothing_window = smoothing_window
 
         self._secondary_data = data
 
-        # for key, value in data:
-        #     setattr(self, key, value)
+        # set all items in data as attributes
+        for item, value in data.items():
+            setattr(self, item, value)
 
     def __len__(self):
         return self.cases.shape[0]
@@ -58,10 +58,7 @@ class Outbreak:
 
         self.smoothed_cases = self._apply_smoothing(self.cases)
         self.smoothed_deaths = self._apply_smoothing(self.deaths)
-
-        self.smoothed_recoveries = None
-        if self.recoveries is not None:
-            self.smoothed_recoveries = self._apply_smoothing(self.recoveries)
+        self.smoothed_recoveries = self._apply_smoothing(self.recoveries)
 
     def _apply_smoothing(self, sequence):
         return sequence.rolling(self.smoothing_window, center=True).mean().dropna()
@@ -107,8 +104,9 @@ class Outbreak:
         return days_since_peak > min_days_since_peak_threshold and gradient_since_peak > min_gradient_since_peak_threshold
 
     def expanding_windows(self, start=0, window_size=7, **kwargs):
-        otw = OutbreakTimeWindow(self, **kwargs)
-        expanding_cutoffs = np.arange(otw.start + window_size, len(self), window_size)
+        # base otw is useful for burn-in
+        base_otw = OutbreakTimeWindow(self, **kwargs)
+        expanding_cutoffs = np.arange(base_otw.start + window_size, len(self), window_size)
 
         return [OutbreakTimeWindow(self, start=start, end=t) for t in expanding_cutoffs]
 

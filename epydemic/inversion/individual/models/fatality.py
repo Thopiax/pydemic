@@ -7,10 +7,10 @@ from skopt.space import Real
 
 from epydemic.inversion.individual.utils import build_hazard_rate, verify_valid_K, describe_rv
 
-from epydemic.inversion.individual.models.base import AbstractIndividualModel
+from epydemic.inversion.individual.models.base import BaseIndividualModel
 
 
-class FatalityIndividualModel(AbstractIndividualModel):
+class FatalityIndividualModel(BaseIndividualModel):
     parameter_dimensions = {
         "initial": [
             Real(0.01, 0.20),
@@ -25,10 +25,14 @@ class FatalityIndividualModel(AbstractIndividualModel):
 
     parameter_named_tuple = namedtuple("FatalityParameters", ["alpha", "beta", "eta"])
 
+    @property
+    def tag(self):
+        return f"fatality_{self._dimensions_key}"
+
     def _build_model(self, max_ppf: int = 0.9999, max_K: int = 100):
         super()._build_model()
 
-        self.rv = weibull_min(self._parameters.beta, scale=self._parameters.eta)
+        self.rv = weibull_min(self.beta, scale=self.eta)
 
         # truncate up until (max_ppf * 100) percentile
         K = np.ceil(self.rv.ppf(max_ppf))

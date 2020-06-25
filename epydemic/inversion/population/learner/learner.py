@@ -2,37 +2,30 @@ import os
 from typing import Optional
 
 from skopt import gbrt_minimize, gp_minimize, forest_minimize, optimizer, load, dump, expected_minimum
-from skopt.callbacks import DeltaYStopper, CheckpointSaver
+from skopt.callbacks import DeltaYStopper, CheckpointSaver, DeadlineStopper
 
-from epydemic.inversion.population.models.base import PopulationFatalityModel
-from utils.path import CACHE_ROOTPATH
+from epydemic.inversion.population.models.base import AbstractPopulationModel
+from epydemic.utils.path import CACHE_ROOTPATH
 
 from .objective_function import LearnerObjectiveFunction
-from .dimensions import DIMENSIONS
 from .loss import LearnerLoss, MASELearnerLoss
 
 
-def _n_calls_remaining(n_calls, n_calls_until_max, min_calls=20):
-    return max(min_calls, min(n_calls_until_max, n_calls))
-
-
-class PopulationFatalityLearner:
-    def __init__(self, model: PopulationFatalityModel, loss: Optional[LearnerLoss] = None,
-                 skopt_minimize: optimizer = gp_minimize, dimensions_name: str = "relaxed",
+class PopulationModelLearner:
+    def __init__(self, model: AbstractPopulationModel, loss: Optional[LearnerLoss] = None,
+                 skopt_minimize: optimizer = gbrt_minimize, dimensions_name: str = "relaxed",
                  verbose: Optional[bool] = None, random_state: Optional[int] = None):
 
         if os.path.isdir(CACHE_ROOTPATH) is False:
             os.mkdir(CACHE_ROOTPATH)
 
         self.model = model
-        self.otw = model.otw
 
         self.verbose = model.verbose if verbose is None else verbose
         self.random_state = model.random_state if random_state is None else random_state
 
-        self.dimensions_name = dimensions_name
-        self.dimensions = DIMENSIONS[dimensions_name]
-        self.random_state = random_state
+        self.dimensions = self.model.individual_model.dimensions
+        self.otw = model.otw
 
         self.loss = MASELearnerLoss(name="MARSE") if loss is None else loss
         self.objective_function = LearnerObjectiveFunction(self.model, loss=self.loss)
@@ -42,16 +35,20 @@ class PopulationFatalityLearner:
 
     @property
     def tag(self):
-        return f"{self.otw.region}__{self.otw.start}_{self.otw.end}__{str(self.loss)}__{self.dimensions_name}_dims"
+        return str(self.loss)
 
     def minimize_loss(self, n_calls=200, n_random_starts=20, n_retries=5, model_queue_size=None, delta=0.01,
                       use_cache=True, overwrite_cache=True, **kwargs):
 
         x0, y0 = None, None
 
+        if use_cache:
+            x0, y0 = self.initial_points
+
         for trie_id in range(n_retries):
-            if use_cache:
-                x0, y0 = self.initial_points
+            # skip if there are more previous calls than n_calls for this retry
+            if x0 is not None and len(x0) > n_calls * (trie_id + 1):
+                continue
 
             result = self.skopt_minimize(
                 self.objective_function,
@@ -63,7 +60,8 @@ class PopulationFatalityLearner:
                 random_state=self.random_state,
                 model_queue_size=model_queue_size,
                 callback=[
-                    DeltaYStopper(delta) # stop the optimization if best 5 solutions are delta width apart
+                    DeltaYStopper(delta), # stop the optimization if best 5 solutions are delta width apart
+                    DeadlineStopper(600) # 10 minutes max
                     # CheckpointSaver(self.tag, compress=9)
                 ],
                 x0=x0,
@@ -77,6 +75,9 @@ class PopulationFatalityLearner:
 
             # cache result
             self.save_result(result, overwrite_cache=overwrite_cache)
+
+            # update initial points
+            x0, y0 = self.initial_points
 
         return self.best_loss, self.best_parameters
 
@@ -97,22 +98,23 @@ class PopulationFatalityLearner:
     @property
     def best_expected_loss(self):
         if self.skopt_result is not None:
-            parameters, loss = expected_minimum(
-                self.skopt_result,
-                n_random_starts=100,
-                random_state=self.random_state
-            )
+            if len(self.skopt_result.models) > 0:
+                parameters, loss = expected_minimum(
+                    self.skopt_result,
+                    n_random_starts=100,
+                    random_state=self.random_state
+                )
 
-            return tuple(parameters), loss
+                return parameters, loss
 
-        return (None, None, None), None
+        return None, None
 
     @property
     def best_parameters(self):
         if self.skopt_result is not None:
-            return tuple(self.skopt_result.x)
+            return self.skopt_result.x
 
-        return None, None, None
+        return None
 
     @property
     def best_loss(self):
@@ -126,7 +128,7 @@ class PopulationFatalityLearner:
         return "gz"
 
     def load_result(self):
-        filepath = CACHE_ROOTPATH / f"{self.tag}.{self._result_file_extension}"
+        filepath = CACHE_ROOTPATH / f"{self.model.tag}.{self._result_file_extension}"
 
         if os.path.isfile(filepath):
             return load(filepath)
@@ -138,7 +140,7 @@ class PopulationFatalityLearner:
             raise Exception
 
         if overwrite_cache:
-            filepath = CACHE_ROOTPATH / f"{self.tag}.{self._result_file_extension}"
+            filepath = CACHE_ROOTPATH / f"{self.model.tag}.{self._result_file_extension}"
 
             del result.specs['args']['func']
             dump(result, filepath, compress=True)

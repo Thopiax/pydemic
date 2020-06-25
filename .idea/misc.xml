@@ -3,5 +3,5 @@
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (coronavirus)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.8.2 (sftp://rafinha@137.117.149.52:22/anaconda/envs/myenv/bin/python)" project-jdk-type="Python SDK" />
 </project>

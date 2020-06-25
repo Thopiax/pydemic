@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import Optional, Dict
 
-from epydemic.outbreak import Outbreak
+from .outbreak import Outbreak
 
 
 class Epidemic:

@@ -4,10 +4,11 @@ from typing import Union
 
 import matplotlib.pyplot as plt
 
-from config import setup_matplotlib
-from utils.path import PLOTS_ROOTPATH
+from epydemic.config import setup_matplotlib
+from epydemic.utils.path import PLOTS_ROOTPATH
 
 setup_matplotlib()
+
 
 def save_figure(dest: Union[str, callable], overwrite: bool = True):
     def decorator_save_figure(func: callable):
@@ -32,7 +33,7 @@ def save_figure(dest: Union[str, callable], overwrite: bool = True):
             if os.path.isfile(path) and overwrite is False:
                 return
 
-                fig.savefig(path, optimize=True, format="pdf")
+            fig.savefig(path, optimize=True, format="pdf")
 
         return wrapper_func
 

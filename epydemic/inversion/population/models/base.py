@@ -2,16 +2,16 @@ from abc import ABC, abstractmethod
 from typing import Optional
 import pandas as pd
 
-from epydemic.inversion.individual import IndividualFatalityModel
+from epydemic.inversion.individual import BaseIndividualModel, FatalityIndividualModel
 from epydemic.outbreak import OutbreakTimeWindow
 
 
-class PopulationFatalityModel(ABC):
-    def __init__(self, otw: OutbreakTimeWindow, individual_model: Optional[IndividualFatalityModel] = None,
+class AbstractPopulationModel(ABC):
+    def __init__(self, otw: OutbreakTimeWindow, individual_model: Optional[BaseIndividualModel] = None,
                  verbose: bool = True, random_state: int = 1):
 
         self.otw = otw
-        self.individual_model = IndividualFatalityModel() if individual_model is None else individual_model
+        self.individual_model = FatalityIndividualModel() if individual_model is None else individual_model
 
         self.random_state = random_state
         self.verbose = verbose
@@ -22,10 +22,12 @@ class PopulationFatalityModel(ABC):
 
     @property
     def tag(self):
-        if self.learner is None:
-            return f"{self.otw.region}__{self.otw.start}_{self.otw.end}__untrained"
+        tag = f"{self.otw.region}__{self.otw.start}_{self.otw.end}__{self.individual_model.tag}"
 
-        return self.learner.tag
+        if self.learner is None:
+            return tag
+
+        return f"{tag}__{self.learner.tag}"
 
     @property
     def parameters(self):

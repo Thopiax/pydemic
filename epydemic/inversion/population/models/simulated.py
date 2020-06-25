@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 
-from epydemic.inversion.population.models.base import PopulationFatalityModel
+from epydemic.inversion.population.models.base import AbstractPopulationModel
 
 
-class SimulatedPopulationFatalityModel(PopulationFatalityModel):
+class SimulatedPopulationModel(AbstractPopulationModel):
     def __init__(self, *args, n_sims=1000, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -13,9 +13,9 @@ class SimulatedPopulationFatalityModel(PopulationFatalityModel):
         self._simulation_cache = {}
 
     def simulate_case_outcomes(self, n_cases):
-        probability_samples = np.random.rand(n_cases, self.patient_hazard.K + 1)
+        probability_samples = np.random.rand(n_cases, self.individual_model.K + 1)
 
-        fatality_mask = probability_samples[:, 0] < self.patient_hazard.alpha
+        fatality_mask = probability_samples[:, 0] < self.individual_model.alpha
         # argmax returns the index of the first "True" in an array of booleans
         fatality_delays = np.argmax(probability_samples[:, 1:] < self.patient_hazard.hazard_rate, axis=1)
 

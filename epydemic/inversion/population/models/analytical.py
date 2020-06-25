@@ -2,11 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-from epydemic.inversion.population.models.base import PopulationFatalityModel
-from epydemic.inversion.population.learner import PopulationFatalityLearner
+from epydemic.inversion.population.models.base import AbstractPopulationModel
+from epydemic.inversion.population.learner import PopulationModelLearner
 
 
-class AnalyticalPopulationFatalityModel(PopulationFatalityModel):
+class AnalyticalPopulationModel(AbstractPopulationModel):
     def __repr__(self):
         return "analytical"
 
@@ -14,19 +14,19 @@ class AnalyticalPopulationFatalityModel(PopulationFatalityModel):
         T = len(self.otw)
         K = self.individual_model.K
 
+        # set cases to be the entire outbreak cases (consider pre burn-in data)
+        cases = self.otw.outbreak.cases
+
         self.expected_fatality_matrix = np.zeros((T, K))
 
-        cumulative_survival_probability = np.cumprod(1 - self.individual_model.hazard_rate)
-
         for t in range(T):
-            for i in range(min(t + 1, K)):
-                self.expected_fatality_matrix[t, i] = self.individual_model.hazard_rate[i] * self.otw.cases[t - i]
+            otw_t = self.otw.start + t
 
-                if i >= 1:
-                    self.expected_fatality_matrix[t, i] *= cumulative_survival_probability[i - 1]
+            for k in range(min(otw_t + 1, K)):
+                self.expected_fatality_matrix[t, k] = self.individual_model.fatality_rate[k] * cases[otw_t - k]
 
     def fit(self, **kwargs):
-        self.learner = PopulationFatalityLearner(self)
+        self.learner = PopulationModelLearner(self)
 
         self.best_loss, self.best_parameters = self.learner.minimize_loss(**kwargs)
         self.parameters = self.best_parameters

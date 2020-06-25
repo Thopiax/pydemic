@@ -6,10 +6,10 @@ from scipy.stats import weibull_min
 from skopt.space import Real
 
 from epydemic.inversion.individual.utils import verify_valid_K, describe_rv
-from epydemic.inversion.individual.models.base import AbstractIndividualModel
+from epydemic.inversion.individual.models.base import BaseIndividualModel
 
 
-class DualIndividualModel(AbstractIndividualModel):
+class DualIndividualModel(BaseIndividualModel):
     parameter_dimensions = {
         "initial": [
             Real(0.01, 0.20),
@@ -27,6 +27,10 @@ class DualIndividualModel(AbstractIndividualModel):
     }
 
     parameter_named_tuple = namedtuple("DualParameters", ["alpha", "beta_f", "eta_f", "beta_r", "eta_r"])
+
+    @property
+    def tag(self):
+        return f"dual_{self._dimensions_key}"
 
     def _build_model(self, max_ppf: int = 0.9999, max_K: int = 100):
         super()._build_model()

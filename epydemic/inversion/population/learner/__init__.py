@@ -1,1 +1,1 @@
-from .learner import PopulationFatalityLearner
+from .learner import PopulationModelLearner

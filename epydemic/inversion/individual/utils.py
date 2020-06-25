@@ -26,13 +26,18 @@ def build_hazard_rate(incidence_rate):
 def describe_rv(rv):
     mean, var, skew, kurtosis = rv.stats(moments="mvsk")
 
+    interval_size = 0.95
+    lower, upper = rv.interval(interval_size)
+
     return pd.Series(dict(
-        mean=mean,
+        mean=float(mean),
+        variance=float(var),
+        skew=float(skew),
+        kurtosis=float(kurtosis),
         median=rv.median(),
         std=rv.std(),
-        variance=var,
-        skew=skew,
-        kurtosis=kurtosis,
         entropy=rv.entropy(),
-        interval90=rv.interval(0.90)
+        lower_interval_bound=lower,
+        upper_interval_bound=upper,
+        interval_size=interval_size
     ))
