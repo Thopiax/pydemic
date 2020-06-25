@@ -5,10 +5,8 @@ from .outbreak import Outbreak
 
 
 class Epidemic:
-    def __init__(self, name: str, cases: pd.DataFrame, deaths: pd.DataFrame, recoveries: Optional[pd.DataFrame] = None, **data):
-        self.name = name
-
-        assert cases is not None and deaths is not None
+    def __init__(self, name: str, cases: pd.DataFrame, deaths: pd.DataFrame, recoveries: pd.DataFrame, **data):
+        self.name: str = name
 
         self.cases: pd.DataFrame = cases
         self.deaths: pd.DataFrame = deaths
@@ -23,15 +21,11 @@ class Epidemic:
     def _build_regions(self):
         cases_regions = set(self.cases.columns)
         deaths_regions = set(self.deaths.columns)
+        recovery_regions = set(self.recoveries.columns)
 
-        assert cases_regions == deaths_regions
+        assert cases_regions == deaths_regions and cases_regions == recovery_regions
 
-        regions = cases_regions.intersection(deaths_regions)
-
-        if self.recoveries is not None:
-            recovery_regions = set(self.recoveries.columns)
-
-            regions = regions.intersection(recovery_regions)
+        regions = cases_regions.intersection(deaths_regions).intersection(recovery_regions)
 
         self._regions = pd.Series(sorted(list(regions)))
 
@@ -43,7 +37,7 @@ class Epidemic:
         def convert_to_timedelta(sequence):
             # remove daily gaps in types
             # (assumption: if data on a specific date is unreported, the latest values at that date are kept.)
-            sequence = sequence.reindex(self.date_range).dropna(how="all").fillna("ffill")
+            sequence = sequence.reindex(self.date_range).dropna(how="all").fillna(method="ffill")
             # set sequence indices to time delta
             sequence.index = pd.to_datetime(sequence.index) - self.start_date
 
@@ -51,9 +45,7 @@ class Epidemic:
 
         self.cases = convert_to_timedelta(self.cases)
         self.deaths = convert_to_timedelta(self.deaths)
-
-        if self.recoveries is not None:
-            self.recoveries = convert_to_timedelta(self.recoveries)
+        self.recoveries = convert_to_timedelta(self.recoveries)
 
         for key, data in self._secondary_data.items():
             self._secondary_data[key] = convert_to_timedelta(data)
@@ -84,17 +76,13 @@ class Epidemic:
         region_deaths = self.deaths.loc[first_case_date:, region]
         region_deaths.index -= first_case_date
 
+        region_recoveries = self.recoveries.loc[first_case_date:, region]
+        region_recoveries.index -= first_case_date
+
         if is_multiregion:
             region_cases = region_cases.sum(axis=1)
             region_deaths = region_deaths.sum(axis=1)
-
-        region_recoveries = None
-        if self.recoveries is not None:
-            region_recoveries = self.recoveries.loc[first_case_date:, region]
-            region_recoveries.index -= first_case_date
-
-            if is_multiregion:
-                region_recoveries = region_recoveries.sum(axis=1)
+            region_recoveries = region_recoveries.sum(axis=1)
 
         region_secondary_data = {}
         for key, data in self._secondary_data.items():
@@ -109,7 +97,7 @@ class Epidemic:
             region_name,
             region_cases,
             region_deaths,
-            recoveries=region_recoveries,
+            region_recoveries,
             **region_secondary_data
         )
 
