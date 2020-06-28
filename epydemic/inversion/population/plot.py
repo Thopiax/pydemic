@@ -3,12 +3,12 @@ import matplotlib.pyplot as plt
 from matplotlib.offsetbox import AnchoredText
 from skopt.plots import plot_objective
 
-from epydemic.inversion.population.models.base import AbstractPopulationModel
+from epydemic.inversion.population.models.base import BasePopulationModel
 from epydemic.utils.decorators import save_figure
 
 
 @save_figure(lambda model, **kwargs: f"predictions/{model.tag}.pdf")
-def plot_prediction(model: AbstractPopulationModel, cumulative: bool = False, parameters = None):
+def plot_prediction(model: BasePopulationModel, cumulative: bool = False, parameters = None):
 
     if parameters is not None:
         model.parameters = parameters
@@ -26,7 +26,7 @@ def plot_prediction(model: AbstractPopulationModel, cumulative: bool = False, pa
 
 
 @save_figure(lambda model: f"partial_dependence/{model.tag}.pdf")
-def plot_partial_dependence(model: AbstractPopulationModel):
+def plot_partial_dependence(model: BasePopulationModel):
     plot_objective(model.learner.skopt_result, size=5, n_samples=100, minimum='result',
                    sample_source='result', dimensions=["alpha", "beta", "lambda"])
 
@@ -34,7 +34,7 @@ def plot_partial_dependence(model: AbstractPopulationModel):
 
 
 @save_figure(lambda model, **kwargs: f"individual_rates/{model.tag}.pdf")
-def plot_individual_rates(model: AbstractPopulationModel, xlim_upper: int = 20):
+def plot_individual_rates(model: BasePopulationModel, xlim_upper: int = 20):
     ax = plt.gca()
 
     ax.set_title(f"{model.otw.region} - Individual Rates")
@@ -43,7 +43,7 @@ def plot_individual_rates(model: AbstractPopulationModel, xlim_upper: int = 20):
 
     fatality_rate, hazard_rate = model.individual_model.fatality_rate, model.individual_model.hazard_rate
 
-    xlim_upper_padding = xlim_upper - model.individual_model.K
+    xlim_upper_padding = xlim_upper - len(model.individual_model.fatality_rate)
 
     if xlim_upper_padding > 0:
         # pad fatality rate with zeros

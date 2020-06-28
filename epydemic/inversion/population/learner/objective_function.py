@@ -1,26 +1,29 @@
 from typing import Optional
 
 from epydemic.inversion.population.learner.loss import LearnerLoss, MASELearnerLoss
-from epydemic.inversion.population.models.base import AbstractPopulationModel
+from epydemic.inversion.population.models.base import BasePopulationModel
 from epydemic.inversion.individual.exceptions import InvalidParameters
 
 
-class LearnerObjectiveFunction(object):
-    def __init__(self, model: AbstractPopulationModel, loss: Optional[LearnerLoss]):
+class SingleLearnerObjectiveFunction(object):
+    def __init__(self, model: BasePopulationModel, loss: Optional[LearnerLoss]):
         self.model = model
         self.loss = loss
-
-        self.y_true = model.otw.deaths.values
         self.loss_weights = model.otw.resolved_case_rate.values
 
     def __call__(self, parameters):
         try:
             self.model.parameters = parameters
             y_pred = self.model.predict()
+            y_true = self.model.target()
 
-            result = self.loss(self.y_true, y_pred, sample_weight=self.loss_weights)
+            if type(y_pred) is not tuple and type(y_pred) is not tuple:
+                return self.loss(y_true, y_pred, sample_weight=self.loss_weights)
 
-            return result
+            # if both values are tuples
+            assert len(y_true) == len(y_pred)
+
+            return sum(self.loss(y_true[i], y_pred[i], sample_weight=self.loss_weights) for i in range(len(y_true)))
 
         except InvalidParameters:
             # return a large penalty for parameters that lead to invalid fatality rate

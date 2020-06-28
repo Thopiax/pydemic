@@ -4,21 +4,17 @@ from typing import Optional
 from skopt import gbrt_minimize, gp_minimize, forest_minimize, optimizer, load, dump, expected_minimum
 from skopt.callbacks import DeltaYStopper, CheckpointSaver, DeadlineStopper
 
-from epydemic.inversion.population.models.base import AbstractPopulationModel
+from epydemic.inversion.population.models.base import BasePopulationModel
 from epydemic.utils.path import CACHE_ROOTPATH
 
-from .objective_function import LearnerObjectiveFunction
+from .objective_function import SingleLearnerObjectiveFunction
 from .loss import LearnerLoss, MASELearnerLoss
 
 
 class PopulationModelLearner:
-    def __init__(self, model: AbstractPopulationModel, loss: Optional[LearnerLoss] = None,
+    def __init__(self, model: BasePopulationModel, loss: Optional[LearnerLoss] = None,
                  skopt_minimize: optimizer = gbrt_minimize, dimensions_name: str = "relaxed",
                  verbose: Optional[bool] = None, random_state: Optional[int] = None):
-
-        if os.path.isdir(CACHE_ROOTPATH) is False:
-            os.mkdir(CACHE_ROOTPATH)
-
         self.model = model
 
         self.verbose = model.verbose if verbose is None else verbose
@@ -28,14 +24,20 @@ class PopulationModelLearner:
         self.otw = model.otw
 
         self.loss = MASELearnerLoss(name="MARSE") if loss is None else loss
-        self.objective_function = LearnerObjectiveFunction(self.model, loss=self.loss)
+        self.objective_function = SingleLearnerObjectiveFunction(self.model, loss=self.loss)
 
         self.skopt_minimize = skopt_minimize
         self._skopt_result = None
 
+        if os.path.isdir(CACHE_ROOTPATH) is False:
+            os.mkdir(CACHE_ROOTPATH)
+
+        if os.path.isdir(CACHE_ROOTPATH / self.tag) is False:
+            os.mkdir(CACHE_ROOTPATH / self.tag)
+
     @property
     def tag(self):
-        return str(self.loss)
+        return f"{self.skopt_minimize.__name__}_{self.loss}"
 
     def minimize_loss(self, n_calls=200, n_random_starts=20, n_retries=5, model_queue_size=None, delta=0.01,
                       use_cache=True, overwrite_cache=True, **kwargs):
@@ -101,7 +103,6 @@ class PopulationModelLearner:
             if len(self.skopt_result.models) > 0:
                 parameters, loss = expected_minimum(
                     self.skopt_result,
-                    n_random_starts=100,
                     random_state=self.random_state
                 )
 
@@ -128,7 +129,7 @@ class PopulationModelLearner:
         return "gz"
 
     def load_result(self):
-        filepath = CACHE_ROOTPATH / f"{self.model.tag}.{self._result_file_extension}"
+        filepath = CACHE_ROOTPATH / self.tag / f"{self.model.tag}.{self._result_file_extension}"
 
         if os.path.isfile(filepath):
             return load(filepath)
@@ -140,7 +141,7 @@ class PopulationModelLearner:
             raise Exception
 
         if overwrite_cache:
-            filepath = CACHE_ROOTPATH / f"{self.model.tag}.{self._result_file_extension}"
+            filepath = CACHE_ROOTPATH / self.tag / f"{self.model.tag}.{self._result_file_extension}"
 
             del result.specs['args']['func']
             dump(result, filepath, compress=True)

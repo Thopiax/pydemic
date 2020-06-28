@@ -172,7 +172,7 @@ def plot_fatality_rates(estimators, right_truncation=100):
     ax.set_xlim(left=0, right=right_truncation)
 
     for i, estimator in enumerate(estimators):
-        fatality_rate = estimator.fatality_rate
+        fatality_rate = estimator.incidence_rate
 
         if type(right_truncation) is int:
             rate_padding = right_truncation - estimator.K
@@ -253,7 +253,7 @@ class HazardEstimateInspector:
             loc="upper center")
         ax.add_artist(text)
 
-        fatality_rate = self.estimator.fatality_rate
+        fatality_rate = self.estimator.incidence_rate
         hazard_rate = self.estimator.hazard_rate
 
         if type(right_truncation) is int:

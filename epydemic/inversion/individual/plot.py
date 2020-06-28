@@ -15,7 +15,7 @@ def plot_individual_rates(model: BaseIndividualModel, region: str, xlim_upper: i
 
     fatality_rate, hazard_rate = model.fatality_rate, model.hazard_rate
 
-    xlim_upper_padding = xlim_upper - model.K
+    xlim_upper_padding = xlim_upper - len(model.fatality_rate)
 
     if xlim_upper_padding > 0:
         # pad fatality rate with zeros

@@ -27,8 +27,8 @@ class Outbreak:
             "cumulative_cases": cases.cumsum(),
             "deaths": deaths,
             "cumulative_deaths": deaths.cumsum(),
-            "recovery": recoveries,
-            "cumulative_recovery": recoveries.cumsum(),
+            "recoveries": recoveries,
+            "cumulative_recoveries": recoveries.cumsum(),
             **data
         })
 

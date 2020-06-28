@@ -8,12 +8,13 @@ import pandas as pd
 import sys
 
 from epydemic.inversion.individual import FatalityIndividualModel
+from inversion.population.models.dual import DualPopulationModel
 
 sys.path.append(Path(__file__).parent.parent.parent)
 
 from epydemic.utils.regions import OECD
 from epydemic.utils.helpers import build_coronavirus_epidemic
-from epydemic.inversion.population.models import AnalyticalPopulationModel
+from epydemic.inversion.population.models import FatalityPopulationModel
 from epydemic.inversion.population.plot import plot_partial_dependence, plot_prediction, plot_individual_rates
 from epydemic.outbreak import OutbreakTimeWindow
 from epydemic.utils.path import DATA_ROOTPATH, ROOTPATH
@@ -35,11 +36,11 @@ def build_oecd_full_outbreak_df():
             continue
 
         for otw in outbreak.expanding_windows():
-            model = AnalyticalPopulationModel(otw, verbose=False)
+            model = DualPopulationModel(otw, verbose=True)
 
             model.fit(
-                n_calls=100,
-                n_retries=0,
+                n_calls=50,
+                n_retries=3,
                 delta=0.05,
             )
 
@@ -65,8 +66,6 @@ if __name__ == "__main__":
 
     for index, row in data.iterrows():
         model = FatalityIndividualModel(parameters=[row["alpha"], row["beta"], row["eta"]])
-
-        print(model.describe())
 
         df.loc[row["region"], :] = model.describe()
 

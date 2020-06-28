@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 
-from epydemic.inversion.population.models.base import AbstractPopulationModel
+from epydemic.inversion.population.models.base import BasePopulationModel
 
 
-class SimulatedPopulationModel(AbstractPopulationModel):
+class SimulatedPopulationModel(BasePopulationModel):
     def __init__(self, *args, n_sims=1000, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -26,6 +26,9 @@ class SimulatedPopulationModel(AbstractPopulationModel):
 
     def update(self, parameters, **kwargs):
         super().update(parameters, **kwargs)
+
+    def target(self):
+        return self.otw.deaths.values
 
     def fit(self, cases: pd.Series, deaths: pd.Series):
         pass

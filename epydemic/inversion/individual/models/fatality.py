@@ -1,11 +1,15 @@
+from typing import Optional
+
 import numpy as np
 import pandas as pd
 from collections import namedtuple
 
+import scipy
 from scipy.stats import weibull_min
 from skopt.space import Real
 
-from epydemic.inversion.individual.utils import build_hazard_rate, verify_valid_K, describe_rv
+from epydemic.inversion.individual.utils import describe_rv, verify_distribution, \
+    build_distribution_rates
 
 from epydemic.inversion.individual.models.base import BaseIndividualModel
 
@@ -25,25 +29,21 @@ class FatalityIndividualModel(BaseIndividualModel):
 
     parameter_named_tuple = namedtuple("FatalityParameters", ["alpha", "beta", "eta"])
 
+    def __init__(self, *args, distribution: scipy.stats = weibull_min, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.distribution = distribution
+
     @property
     def tag(self):
-        return f"fatality_{self._dimensions_key}"
+        return f"fatality__{self.distribution.name}__{self._dimensions_key}"
 
-    def _build_model(self, max_ppf: int = 0.9999, max_K: int = 100):
+    def _build_model(self, max_ppf: int = 0.9999):
         super()._build_model()
 
-        self.rv = weibull_min(self.beta, scale=self.eta)
+        self.rv = self.distribution(self.beta, scale=self.eta)
 
-        # truncate up until (max_ppf * 100) percentile
-        K = np.ceil(self.rv.ppf(max_ppf))
-
-        # check that K is valid
-        verify_valid_K(K)
-
-        # ensure K is less than max_K
-        self.K = min(int(K), max_K)
-
-        self.fatality_rate, self.hazard_rate = self.build_incidence_rate(self.rv)
+        self.fatality_rate, self.hazard_rate = build_distribution_rates(self.rv)
 
     def describe(self):
         super().describe()

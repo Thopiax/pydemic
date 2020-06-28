@@ -1,26 +1,42 @@
 import numpy as np
 import pandas as pd
+import scipy
+from scipy.stats import stats
 
 from .exceptions import InvalidParameters
 
+MAX_DEATH_DELAY_THRESHOLD = 60 # days
+MAX_DEATH_DELAY_VARIANCE = 900 # days => std < 30 days
+MAX_PPF = 0.999 # 99.9 % of occurences happen before this day
 
-def verify_valid_K(K):
-    if np.isnan(K) or np.isinf(K) or K < 1:
+
+def verify_distribution(rv: stats):
+    if rv.median() > MAX_DEATH_DELAY_THRESHOLD or rv.var() > MAX_DEATH_DELAY_VARIANCE:
         raise InvalidParameters
 
     return True
 
 
-def build_hazard_rate(incidence_rate):
-    K = len(incidence_rate)
+def build_distribution_rates(rv: scipy.stats, max_delay: int = MAX_DEATH_DELAY_THRESHOLD):
+    verify_distribution(rv)
 
-    cumulative_incidence_rate = np.cumsum(incidence_rate)
+    # TODO: change below
+    delay = max_delay
+    support = np.arange(delay)
 
-    result = np.zeros(K)
-    result[0] = incidence_rate[0]
-    result[1:] = incidence_rate[1:] / (1 - cumulative_incidence_rate[:-1])
+    print("initial", delay)
 
-    return result
+    incidence_rate = np.trim_zeros(rv.pdf(support), trim="b")
+    delay = len(incidence_rate)
+
+    print("updated", delay)
+
+    support = np.arange(delay)
+
+    print(incidence_rate, rv.sf(support))
+    hazard_rate = incidence_rate / rv.sf(support)
+
+    return incidence_rate, hazard_rate
 
 
 def describe_rv(rv):
