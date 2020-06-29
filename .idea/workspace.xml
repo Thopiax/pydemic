@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="2c516fc1-827c-428b-a01c-e5194546adce" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/epydemic/inversion/population/models/dual.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/inversion/population/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/inversion/incidence.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/_legacy/evaluator.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/_legacy/evaluator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/cfr/estimator/mortality_rate.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/estimator/mortality_rate.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/models/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/models/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/models/dual.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/models/dual.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/models/fatality.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/models/fatality.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/plot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/learner/learner.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/learner/learner.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/learner/objective_function.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/learner/objective_function.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/analytical.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/models/fatality.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/models/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/simulated.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/models/simulated.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/elastic.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/epydemic/outbreak/outbreak.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outbreak/outbreak.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/epydemic/scripts/sandbox.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/scripts/sandbox.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nbs/EDA.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/nbs/EDA.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nbs/EDA.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/nbs/oxford_data.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +57,19 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="hiddenUrls">
+      <set>
+        <option value="git@github.com:Thopiax/CoronavirusMortalityRate.git" />
+      </set>
+    </option>
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/epydemic/inversion/population/learner/learner.py" root0="FORCE_HIGHLIGHTING" />
@@ -68,6 +85,8 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
@@ -191,6 +210,7 @@
       <workItem from="1592988873473" duration="2439000" />
       <workItem from="1593080279758" duration="18062000" />
       <workItem from="1593342184375" duration="515000" />
+      <workItem from="1593425080653" duration="15249000" />
     </task>
     <task id="LOCAL-00001" summary="Remove Archive">
       <created>1591292931339</created>
@@ -234,7 +254,14 @@
       <option name="project" value="LOCAL" />
       <updated>1593084376857</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Remove _legacy folder.">
+      <created>1593343035302</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1593343035302</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -261,13 +288,18 @@
     <MESSAGE value="Simple transition of code from notebooks to library." />
     <MESSAGE value="New notebook and updated models." />
     <MESSAGE value="Outbreak is now a DataFrame wrapper." />
-    <option name="LAST_COMMIT_MESSAGE" value="Outbreak is now a DataFrame wrapper." />
+    <MESSAGE value="Remove _legacy folder." />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove _legacy folder." />
   </component>
   <component name="WindowStateProjectService">
-    <state x="417" y="100" key="CommitChangelistDialog2" timestamp="1593084376307">
+    <state x="653" y="248" key="#com.intellij.ide.util.MemberChooser" timestamp="1593436095523">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="417" y="100" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1593084376307" />
+    <state x="653" y="248" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1593436095523" />
+    <state x="417" y="100" key="CommitChangelistDialog2" timestamp="1593343034925">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="417" y="100" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1593343034925" />
     <state width="1638" height="338" key="GridCell.Tab.0.bottom" timestamp="1593281725859">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
@@ -288,10 +320,10 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="538" y="280" width="604" height="490" key="find.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1593197842623" />
-    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup" timestamp="1593197848484">
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup" timestamp="1593434303048">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1593197848484" />
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1593434303048" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

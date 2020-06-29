@@ -37,6 +37,9 @@ class Outbreak:
         self.smoothing_window = smoothing_window
 
     def __getitem__(self, item):
+        if type(item) is slice:
+            return self._df.iloc[item]
+
         return getattr(self, item)
 
     def __getattr__(self, item):

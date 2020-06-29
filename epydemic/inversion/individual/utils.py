@@ -24,16 +24,11 @@ def build_distribution_rates(rv: scipy.stats, max_delay: int = MAX_DEATH_DELAY_T
     delay = max_delay
     support = np.arange(delay)
 
-    print("initial", delay)
-
     incidence_rate = np.trim_zeros(rv.pdf(support), trim="b")
     delay = len(incidence_rate)
 
-    print("updated", delay)
-
     support = np.arange(delay)
 
-    print(incidence_rate, rv.sf(support))
     hazard_rate = incidence_rate / rv.sf(support)
 
     return incidence_rate, hazard_rate

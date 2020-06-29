@@ -21,8 +21,8 @@ from epydemic.utils.path import DATA_ROOTPATH, ROOTPATH
 
 
 def build_oecd_full_outbreak_df():
-    # if os.path.isfile(DATA_ROOTPATH / "oecd_outbreak_record.csv"):
-    #     return pd.read_csv(DATA_ROOTPATH / "oecd_outbreak_record.csv", index_col=0)
+    if os.path.isfile(DATA_ROOTPATH / "oecd_outbreak_record.csv"):
+        return pd.read_csv(DATA_ROOTPATH / "oecd_outbreak_record.csv", index_col=0)
 
     epidemic = build_coronavirus_epidemic()
 
