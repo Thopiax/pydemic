@@ -16,6 +16,7 @@
           <option value="fatality.population.learners.objective_function.Optional" />
           <option value="bool.all" />
           <option value="functools.cached_property" />
+          <option value="property.setter" />
         </list>
       </option>
     </inspection_tool>

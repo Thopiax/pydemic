@@ -1,0 +1,1 @@
+from .negbinomial import NegBinomialOutcomeDistribution

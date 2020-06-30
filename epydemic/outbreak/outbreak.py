@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from scipy.signal import find_peaks
 
+from utils.path import DATA_ROOTPATH
 from .time_window import OutbreakTimeWindow
 
 
@@ -19,20 +20,21 @@ def _ffx_index(cumulative_x, threshold):
 
 
 class Outbreak:
+    required_fields = ["cases", "deaths", "recoveries"]
+
     def __init__(self, region: str, cases: pd.Series, deaths: pd.Series, recoveries: pd.Series,
-                 smoothing_window: int = 3, **data):
-
-        self._df = pd.DataFrame({
-            "cases": cases,
-            "cumulative_cases": cases.cumsum(),
-            "deaths": deaths,
-            "cumulative_deaths": deaths.cumsum(),
-            "recoveries": recoveries,
-            "cumulative_recoveries": recoveries.cumsum(),
-            **data
-        })
-
+                 smoothing_window: int = 3, df: Optional[pd.DataFrame] = None, **kwargs):
+        self._df: pd.DataFrame = pd.DataFrame({"cases": cases, "deaths": deaths, "recoveries": recoveries, **kwargs})
         self._df.name = region
+
+        # join with df if attribute present
+        if df is not None:
+            self._df = self._df.join(df)
+
+        # construct the cumulative columns if they are not present in the df
+        for field in Outbreak.required_fields:
+            if f"cumulative_{field}" not in self._df.columns:
+                self._df[f"cumulative_{field}"] = self._df[field].cumsum()
 
         self.smoothing_window = smoothing_window
 
@@ -129,18 +131,33 @@ class Outbreak:
         return _ffx_index(cumulative_x, xs[0])
 
     @staticmethod
+    def from_df(df: pd.DataFrame):
+        assert all(field in df.columns for field in Outbreak.required_fields)
+
+        other_columns = df[df.columns[~df.columns.isin(Outbreak.required_fields)]]
+
+        return Outbreak(
+            df.name,
+            df["cases"],
+            df["deaths"],
+            df["recoveries"],
+            df=other_columns
+        )
+
+    @staticmethod
     def from_csv(region):
         filepath = f"./data/coronavirus/{region}.csv"
 
         if os.path.isfile(filepath):
             outbreak_df = pd.read_csv(filepath, index_col=0)
             outbreak_df.index = pd.to_timedelta(outbreak_df.index)
+            outbreak_df.name = region
 
-            return Outbreak(region, outbreak_df["Infected"], outbreak_df["Dead"], outbreak_df["Recovered"])
+            return Outbreak.from_df(outbreak_df)
 
         raise Exception(f"File for {region} not found.")
 
     def to_csv(self):
-        self._df.to_csv(f"../data/coronavirus/{self.region}.csv")
-        self._smooth_df.to_csv(f"../data/coronavirus/{self.region}_s{self.smoothing_window}.csv")
+        self._df.to_csv(DATA_ROOTPATH / f"coronavirus/{self.region}.csv")
+        self._smooth_df.to_csv(DATA_ROOTPATH / f"coronavirus/{self.region}_s{self.smoothing_window}.csv")
 

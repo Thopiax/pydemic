@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 
-import seaborn as sns
-import matplotlib.pyplot as plt
 import pandas as pd
 
 import sys
@@ -12,12 +10,9 @@ from inversion.population.models.dual import DualPopulationModel
 
 sys.path.append(Path(__file__).parent.parent.parent)
 
-from epydemic.utils.regions import OECD
+from data.regions import OECD
 from epydemic.utils.helpers import build_coronavirus_epidemic
-from epydemic.inversion.population.models import FatalityPopulationModel
-from epydemic.inversion.population.plot import plot_partial_dependence, plot_prediction, plot_individual_rates
-from epydemic.outbreak import OutbreakTimeWindow
-from epydemic.utils.path import DATA_ROOTPATH, ROOTPATH
+from epydemic.utils.path import DATA_ROOTPATH
 
 
 def build_oecd_full_outbreak_df():
