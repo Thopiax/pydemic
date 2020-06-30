@@ -13,10 +13,6 @@ def build_coronavirus_epidemic(**data):
                                        parse_dates=[0])
     coronavirus_recovered_df = pd.read_csv(DATA_ROOTPATH / "clean/coronavirus_recovered_global.csv",
                                            index_col=0, parse_dates=[0])
-    coronavirus_oxford_df = pd.read_csv(DATA_ROOTPATH / "clean/coronavirus_oxford_index.csv")
-
-
-    coronavirus_oxford_df.to_dict(data)
 
     return Epidemic(
         "Coronavirus",

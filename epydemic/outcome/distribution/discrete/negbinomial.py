@@ -9,7 +9,8 @@ from epydemic.outcome.distribution.discrete.main import DiscreteOutcomeDistribut
 
 
 class NegBinomialOutcomeDistribution(DiscreteOutcomeDistribution):
-    Parameters = namedtuple("NegBinomialParameters", ["r", "p"])
+    name = "NegBinomial"
+    Parameters = namedtuple(name, ["r", "p"])
 
     @property
     def dimensions(self):

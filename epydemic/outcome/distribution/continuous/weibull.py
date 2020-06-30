@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from scipy.stats import weibull_minD, nbinom
+from scipy.stats import weibull_min
 from scipy.stats._distn_infrastructure import rv_frozen
 
 from skopt.space import Real
@@ -9,7 +9,8 @@ from epydemic.outcome.distribution.continuous import ContinuousOutcomeDistributi
 
 
 class WeibullOutcomeDistribution(ContinuousOutcomeDistribution):
-    Parameters = namedtuple("WeibullParameters", ["beta", "eta"])
+    name = "Weibull"
+    Parameters = namedtuple(name, ["beta", "eta"])
 
     @property
     def dimensions(self):

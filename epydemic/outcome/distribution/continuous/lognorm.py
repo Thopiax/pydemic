@@ -1,13 +1,16 @@
 from collections import namedtuple
 
-from scipy.stats import weibull_min, lognorm, nbinom
+from scipy.stats import lognorm
 from scipy.stats._distn_infrastructure import rv_frozen
 
 from skopt.space import Real, Integer
 
+from epydemic.outcome.distribution.continuous import ContinuousOutcomeDistribution
+
 
 class LognormOutcomeDistribution(ContinuousOutcomeDistribution):
-    Parameters = namedtuple("LognormParameters", ["mu", "sigma"])
+    name = "Lognormal"
+    Parameters = namedtuple(name, ["mu", "sigma"])
 
     @property
     def dimensions(self):

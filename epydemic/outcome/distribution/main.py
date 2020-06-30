@@ -47,7 +47,7 @@ def describe(random_variable: rv_frozen):
 
 class OutcomeDistribution(ABC):
     Parameters: Optional[NamedTuple] = None
-    type: Optional[str] = None
+    name: Optional[str] = None
 
     def __init__(self, *parameters, max_rate_support_size: int = MAX_RATE_SUPPORT_SIZE,
                  max_rate_ppf: int = MAX_RATE_PPF, rate_support_offset: float = 0.5):
@@ -66,6 +66,9 @@ class OutcomeDistribution(ABC):
 
         if len(parameters) > 0:
             self.parameters = parameters
+
+    def describe_random_variable(self):
+        return describe(self.random_variable)
 
     @property
     def is_valid(self):

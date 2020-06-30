@@ -2,10 +2,14 @@ import os
 from pathlib import Path
 
 import pandas as pd
+import numpy as np
 
 import sys
 
-from epydemic.inversion.individual import FatalityIndividualModel
+from epydemic.outcome.distribution.discrete import NegBinomialOutcomeDistribution
+from epydemic.outcome.models.dual import DualOutcomeModel
+from epydemic.outbreak import Outbreak
+
 from inversion.population.models.dual import DualPopulationModel
 
 sys.path.append(Path(__file__).parent.parent.parent)
@@ -23,7 +27,8 @@ def build_oecd_full_outbreak_df():
 
     ptr = 0
 
-    oecd_full_outbreak_df = pd.DataFrame(columns=["region", "otw_start", "otw_end", "alpha", "beta", "eta", "loss", "MTTF"])
+    oecd_full_outbreak_df = pd.DataFrame(
+        columns=["region", "otw_start", "otw_end", "alpha", "beta", "eta", "loss", "MTTF"])
 
     for region, outbreak in epidemic.get_outbreaks(OECD).items():
         # skip outbreaks with fewer than 1,000 deaths
@@ -51,18 +56,25 @@ def build_oecd_full_outbreak_df():
 
     return oecd_full_outbreak_df
 
-df = None
-data = None
+
+fatality_description_df = None
+recovery_description_df = None
 
 if __name__ == "__main__":
-    data: pd.DataFrame = build_oecd_full_outbreak_df()
+    outbreak = Outbreak.from_csv("Germany")
+    dm = DualOutcomeModel(outbreak, NegBinomialOutcomeDistribution(), NegBinomialOutcomeDistribution())
 
-    df = pd.DataFrame(columns=['mean', 'median', 'std', 'variance', 'skew', 'kurtosis', 'entropy', 'p05', 'p95'])
+    for t in np.arange(len(outbreak) - 1, outbreak.ffx(100, x_type="deaths"), -1):
+        dm.fit(t, max_calls=200, verbose=False)
 
-    for index, row in data.iterrows():
-        model = FatalityIndividualModel(parameters=[row["alpha"], row["beta"], row["eta"]])
+        if fatality_description_df is None:
+            fatality_description_df = pd.DataFrame(columns=list(dm.fatality_distribution.describe_random_variable().keys()))
+            recovery_description_df = pd.DataFrame(columns=list(dm.recovery_distribution.describe_random_variable().keys()))
 
-        df.loc[row["region"], :] = model.describe()
+        fatality_description_df.loc[t, :] = dm.fatality_distribution.describe_random_variable()
+        recovery_description_df.loc[t, :] = dm.recovery_distribution.describe_random_variable()
 
-    # data = main()
+        print(dm.alpha(t), fatality_description_df.loc[t, "mean"], recovery_description_df.loc[t, "mean"])
 
+        # dm.fatality_distribution.plot_incidence()
+        # dm.recovery_distribution.plot_incidence()

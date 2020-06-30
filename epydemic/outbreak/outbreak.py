@@ -25,7 +25,7 @@ class Outbreak:
     def __init__(self, region: str, cases: pd.Series, deaths: pd.Series, recoveries: pd.Series,
                  smoothing_window: int = 3, df: Optional[pd.DataFrame] = None, **kwargs):
         self._df: pd.DataFrame = pd.DataFrame({"cases": cases, "deaths": deaths, "recoveries": recoveries, **kwargs})
-        self._df.name = region
+        self.region = region
 
         # join with df if attribute present
         if df is not None:
@@ -38,27 +38,8 @@ class Outbreak:
 
         self.smoothing_window = smoothing_window
 
-    def __getitem__(self, item):
-        if type(item) is slice:
-            return self._df.iloc[item]
-
-        return getattr(self, item)
-
-    def __getattr__(self, item):
-        df = self._df
-
-        if item.startswith("smooth"):
-            df = self._smooth_df
-            item = item[item.find("_") + 1:]
-
-        return df[item]
-
     def __len__(self):
         return self._df.shape[0]
-
-    @cached_property
-    def region(self):
-        return self._df.name
 
     @cached_property
     def resolved_case_rate(self):
@@ -129,6 +110,22 @@ class Outbreak:
             return [_ffx_index(cumulative_x, x) for x in xs]
 
         return _ffx_index(cumulative_x, xs[0])
+
+    def __getitem__(self, item):
+        if type(item) is slice:
+            return self._df.iloc[item]
+
+        return getattr(self, item)
+
+    def __getattr__(self, item):
+        if item in self._df.columns:
+            return self._df[item]
+
+        if item.startswith("smooth"):
+            item = item[item.find("_") + 1:]
+            return self._smooth_df[item]
+
+        return self.__getattribute__(item)
 
     @staticmethod
     def from_df(df: pd.DataFrame):
