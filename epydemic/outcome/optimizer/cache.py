@@ -1,13 +1,14 @@
 import os
+from typing import Union
+from pathlib import PosixPath
 
 from outcome.optimizer.utils import load_result, save_result
 from utils.path import CACHE_ROOTPATH
 
 
 class OutcomeOptimizerCache:
-    def __init__(self, tuner, model):
-        self.tuner = tuner
-        self._path = CACHE_ROOTPATH / model.path
+    def __init__(self, path: Union[str, PosixPath]):
+        self._path = CACHE_ROOTPATH / path
 
         if os.path.exists(self._path) is False:
             os.makedirs(self._path)

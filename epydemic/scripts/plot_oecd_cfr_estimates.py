@@ -1,40 +1,38 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from epydemic import NaiveCFREstimator, ResolvedCFREstimator, WeightedResolvedCFREstimator, CFREvaluator
-from types.models import Epidemic, OECD_COUNTRIES
+from cfr.utils import build_estimates
+from epydemic.data.covid19 import load_coronavirus_epidemic
 
-coronavirus_confirmed_df = pd.read_csv("../types/clean/coronavirus_confirmed_global.csv", index_col=0,
-                                       parse_dates=[0])
-coronavirus_death_df = pd.read_csv("../types/clean/coronavirus_death_global.csv", index_col=0, parse_dates=[0])
-coronavirus_recovered_df = pd.read_csv("../types/clean/coronavirus_recovered_global.csv", index_col=0,
-                                       parse_dates=[0])
-coronavirus_advanced_testing_policy_adopted = pd.read_csv(
-    "../types/clean/coronavirus_advanced_testing_policy_adopted.csv", index_col=0, squeeze=True)
-coronavirus_latest_testing_per_thousand = pd.read_csv("../types/clean/coronavirus_latest_testing_per_thousand.csv",
-                                                      index_col=0, squeeze=True)
+from epydemic.cfr.models import NaiveCFRModel, ComplementCFRModel, WeightedResolvedCFRModel, ResolvedCFRModel
+from epydemic.data.regions import OECD
+from outbreak import Epidemic, Outbreak
 
-epidemic = Epidemic(
-    "Coronavirus",
-    coronavirus_confirmed_df,
-    coronavirus_death_df,
-    recoveries=coronavirus_recovered_df,
-    advanced_testing_policy_adopted=coronavirus_advanced_testing_policy_adopted,
-    latest_testing_per_thousand=coronavirus_latest_testing_per_thousand
-)
 
-OECD_outbreak = epidemic.multiregional_outbreak("OECD", OECD_COUNTRIES)
-mea = CFREvaluator(OECD_outbreak, NaiveCFREstimator, ResolvedCFREstimator, WeightedResolvedCFREstimator)
+def plot_outbreak_estimates(outbreak: Outbreak):
+    estimates = build_estimates(outbreak, NaiveCFRModel, ComplementCFRModel, ResolvedCFRModel, WeightedResolvedCFRModel)
 
-ax = plt.gca()
-ax.set_title(f"CFR Estimators - OECD")
-mea.plot_estimates()
-plt.show()
+    latest_estimate = NaiveCFRModel(outbreak).estimate(-1)
 
-for region, outbreak in epidemic.get_outbreaks(OECD_COUNTRIES).items():
-    mea = CFREvaluator(outbreak, NaiveCFREstimator, ResolvedCFREstimator, WeightedResolvedCFREstimator)
-
-    ax = plt.gca()
-    ax.set_title(f"CFR Estimators - {region}")
-    mea.plot_estimates()
+    ax: plt.axis = plt.gca()
+    ax.set_title(f"CFR - {outbreak.region}")
+    estimates.plot(ax=ax)
+    ax.hlines(latest_estimate, 0, estimates.index[-1], colors="red", linestyles="--")
     plt.show()
+
+    return estimates
+
+
+def main():
+    epidemic = load_coronavirus_epidemic(include_policies=False)
+
+    OECD_outbreak = epidemic.combine("OECD", *OECD)
+
+    plot_outbreak_estimates(OECD_outbreak)
+
+    for _, outbreak in epidemic[OECD]:
+        plot_outbreak_estimates(outbreak)
+
+
+if __name__ == '__main__':
+    main()

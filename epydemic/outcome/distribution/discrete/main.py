@@ -5,10 +5,10 @@ from abc import ABC
 
 from scipy.stats._distn_infrastructure import rv_frozen
 
-from epydemic.outcome.distribution.main import OutcomeDistribution
+from epydemic.outcome.distribution.main import BaseOutcomeDistribution
 
 
-class DiscreteOutcomeDistribution(OutcomeDistribution, ABC):
+class DiscreteOutcomeDistribution(BaseOutcomeDistribution, ABC):
     def build_incidence_rate(self, support: np.ndarray, random_variable: rv_frozen, **kwargs) -> pd.Series:
         return pd.Series(
             random_variable.pmf(support),

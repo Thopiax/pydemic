@@ -5,49 +5,18 @@ import matplotlib.pyplot as plt
 from abc import ABC, abstractmethod
 
 from scipy.stats._distn_infrastructure import rv_frozen
-from typing import Optional, List, NamedTuple, Iterable, Union
+from typing import Optional, NamedTuple, Iterable, Union, Collection
 
 from skopt.space import Dimension
 
-from inversion.individual.exceptions import InvalidParameters
-
-MAX_RATE_PPF = 0.999  # only 1 in 1000 cases are not considered
-MAX_RATE_SUPPORT_SIZE = 60  # days
-MAX_RATE_VARIANCE = 1000  # days => std < 30 days
+from epydemic.outcome.distribution.exceptions import InvalidParameterError
+from outcome.distribution.utils import MAX_RATE_PPF, MAX_RATE_SUPPORT_SIZE, verify_random_variable, verify_rate, \
+    describe
 
 
-def verify_random_variable(random_variable: rv_frozen):
-    pass
-
-
-def verify_rate(rate: pd.Series):
-    if np.isnan(rate).any() or np.isinf(rate).any():
-        raise InvalidParameters
-
-
-def describe(random_variable: rv_frozen):
-    mean, var, skew, kurtosis = random_variable.stats(moments="mvsk")
-
-    interval_size = 0.95
-    lower, upper = random_variable.interval(interval_size)
-
-    return pd.Series(dict(
-        mean=float(mean),
-        std=random_variable.std(),
-        variance=float(var),
-        skew=float(skew),
-        kurtosis=float(kurtosis),
-        median=random_variable.median(),
-        entropy=random_variable.entropy(),
-        lower_interval_bound=lower,
-        upper_interval_bound=upper,
-        interval_size=interval_size
-    ))
-
-
-class OutcomeDistribution(ABC):
+class BaseOutcomeDistribution(ABC):
     Parameters: Optional[NamedTuple] = None
-    name: Optional[str] = None
+    name: str = "base"
 
     def __init__(self, *parameters, max_rate_support_size: int = MAX_RATE_SUPPORT_SIZE,
                  max_rate_ppf: int = MAX_RATE_PPF, rate_support_offset: float = 0.5):
@@ -73,6 +42,10 @@ class OutcomeDistribution(ABC):
     @property
     def is_valid(self):
         return self._parameters is not None
+
+    @property
+    def n_parameters(self) -> int:
+        return len(self.dimensions)
 
     @property
     def parameters(self) -> Optional[NamedTuple]:
@@ -152,14 +125,14 @@ class OutcomeDistribution(ABC):
 
         plt.legend()
 
-    @abstractmethod
-    def dimensions(self) -> List[Dimension]:
+    @property
+    def dimensions(self) -> Collection[Dimension]:
         raise NotImplementedError
 
     def verify_parameters(self, parameters: NamedTuple) -> bool:
         for i, parameter_dims in enumerate(self.dimensions):
             if parameters[i] not in parameter_dims:
-                raise InvalidParameters
+                raise InvalidParameterError
 
         return True
 

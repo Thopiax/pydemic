@@ -5,10 +5,10 @@ from abc import ABC
 
 from scipy.stats import rv_frozen
 
-from outcome.distribution.main import OutcomeDistribution
+from outcome.distribution.main import BaseOutcomeDistribution
 
 
-class ContinuousOutcomeDistribution(OutcomeDistribution, ABC):
+class ContinuousOutcomeDistribution(BaseOutcomeDistribution, ABC):
     def build_incidence_rate(self, support: np.ndarray, random_variable: rv_frozen, offset: float = 0.0) -> pd.Series:
         return pd.Series(
             random_variable.pdf(support + offset),

@@ -3,14 +3,18 @@ from pathlib import Path
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+
+from skopt.plots import plot_objective
 
 import sys
 
 from epydemic.outcome.distribution.discrete import NegBinomialOutcomeDistribution
-from epydemic.outcome.models.dual import DualOutcomeModel
+from outcome.models.ensemble.dual import DualOutcomeRegression
 from epydemic.outbreak import Outbreak
 
 from inversion.population.models.dual import DualPopulationModel
+from outcome.models.exceptions import TrivialTargetError
 
 sys.path.append(Path(__file__).parent.parent.parent)
 
@@ -30,7 +34,7 @@ def build_oecd_full_outbreak_df():
     oecd_full_outbreak_df = pd.DataFrame(
         columns=["region", "otw_start", "otw_end", "alpha", "beta", "eta", "loss", "MTTF"])
 
-    for region, outbreak in epidemic.get_outbreaks(OECD).items():
+    for region, outbreak in epidemic[OECD].items():
         # skip outbreaks with fewer than 1,000 deaths
         if outbreak.ffx(1_000, x_type="deaths") is None:
             continue
@@ -62,19 +66,23 @@ recovery_description_df = None
 
 if __name__ == "__main__":
     outbreak = Outbreak.from_csv("Germany")
-    dm = DualOutcomeModel(outbreak, NegBinomialOutcomeDistribution(), NegBinomialOutcomeDistribution())
+    dm = DualOutcomeRegression(
+        outbreak,
+        NegBinomialOutcomeDistribution(),
+        NegBinomialOutcomeDistribution()
+    )
 
-    for t in np.arange(len(outbreak) - 1, outbreak.ffx(100, x_type="deaths"), -1):
-        dm.fit(t, max_calls=200, verbose=False)
+    for t in np.arange(outbreak.ffx(10, x_type="deaths"), len(outbreak) - 1):
+        print("fitting for", t)
+        try:
+            result, optimization_result = dm.fit(t, n_calls=300, max_calls=500, verbose=True)
 
-        if fatality_description_df is None:
-            fatality_description_df = pd.DataFrame(columns=list(dm.fatality_distribution.describe_random_variable().keys()))
-            recovery_description_df = pd.DataFrame(columns=list(dm.recovery_distribution.describe_random_variable().keys()))
+            plot_objective(optimization_result)
+            plt.show()
 
-        fatality_description_df.loc[t, :] = dm.fatality_distribution.describe_random_variable()
-        recovery_description_df.loc[t, :] = dm.recovery_distribution.describe_random_variable()
+            print(result.tolist())
+        except TrivialTargetError:
+            print("Trivial target")
+            pass
 
-        print(dm.alpha(t), fatality_description_df.loc[t, "mean"], recovery_description_df.loc[t, "mean"])
-
-        # dm.fatality_distribution.plot_incidence()
-        # dm.recovery_distribution.plot_incidence()
+    dm._result_cache.to_csv(DATA_ROOTPATH / "germany_result.csv")
