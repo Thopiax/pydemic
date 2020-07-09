@@ -20,29 +20,51 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2c516fc1-827c-428b-a01c-e5194546adce" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/cache.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/loss.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/cfr/models/complement.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/data/covid19/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/exceptions.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/ensemble/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/ensemble/dual.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/ensemble/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/exceptions.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/fatality.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/recovery.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/rafa.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/rafa.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outbreak/outbreak.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outbreak/outbreak.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/continuous/lognorm.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/continuous/lognorm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/continuous/weibull.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/continuous/weibull.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/discrete/negbinomial.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/discrete/negbinomial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/data/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/data/jsse.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/data/covid19/jsse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/data/oxford.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/data/covid19/oxford.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/exceptions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/models/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/models/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/learner/objective_function.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/learner/objective_function.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/models/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/fatality.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/models/fatality.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outbreak/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outbreak/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outbreak/epidemic.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outbreak/epidemic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outbreak/outbreak.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outbreak/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outbreak/time_window.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/continuous/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/continuous/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/discrete/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/discrete/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/estimation/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/estimation/cfr/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/cfr/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/estimation/cfr/estimator/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/estimation/cfr/estimator/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/estimation/cfr/estimator/naive.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/naive.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/estimation/cfr/estimator/resolved.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/resolved.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/estimation/cfr/evaluator.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/cfr/evaluator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/estimation/dual.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/dual.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/estimation/tuner.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/models/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/naive.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/models/naive.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/resolved.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/models/resolved.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/evaluator.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/dual.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/optimizer/cache.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/cache.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/optimizer/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/loss.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/optimizer/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/scripts/plot_oecd_cfr_estimates.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/scripts/plot_oecd_cfr_estimates.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/epydemic/scripts/sandbox.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/scripts/sandbox.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/utils/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/utils/helpers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,19 +141,19 @@
     </option>
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/epydemic/outcome" />
-      <recent name="$PROJECT_DIR$/epydemic/outcome/models" />
-      <recent name="$PROJECT_DIR$/epydemic/outcome/optimization" />
-      <recent name="$PROJECT_DIR$/epydemic/data" />
-      <recent name="$PROJECT_DIR$/epydemic/outcome/estimation" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/epydemic/scripts" />
       <recent name="$PROJECT_DIR$/scripts" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/epydemic/outcome/models" />
+      <recent name="$PROJECT_DIR$/epydemic/outcome/models/ensemble" />
+      <recent name="$PROJECT_DIR$/epydemic/outcome/ensemble" />
+      <recent name="$PROJECT_DIR$/epydemic" />
+      <recent name="$PROJECT_DIR$/epydemic/data/covid19" />
+    </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.plot_oecd_cfr_estimates">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="coronavirus_study" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -146,6 +168,25 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="plot_oecd_cfr_estimates" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="coronavirus_study" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/epydemic/scripts" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/epydemic/scripts/plot_oecd_cfr_estimates.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -175,6 +216,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.plot_oecd_cfr_estimates" />
         <item itemvalue="Python.sandbox" />
       </list>
     </recent_temporary>
@@ -210,7 +252,10 @@
       <workItem from="1593080279758" duration="18062000" />
       <workItem from="1593342184375" duration="515000" />
       <workItem from="1593425080653" duration="26346000" />
-      <workItem from="1593507978391" duration="19786000" />
+      <workItem from="1593507978391" duration="20427000" />
+      <workItem from="1593553332499" duration="11106000" />
+      <workItem from="1594024395831" duration="6847000" />
+      <workItem from="1594037683439" duration="20839000" />
     </task>
     <task id="LOCAL-00001" summary="Remove Archive">
       <created>1591292931339</created>
@@ -275,11 +320,28 @@
       <option name="project" value="LOCAL" />
       <updated>1593528563477</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Implement &quot;optimizer&quot; module and begun optimizations.">
+      <created>1593542770693</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1593542770693</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="2" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -305,7 +367,8 @@
     <MESSAGE value="Remove _legacy folder." />
     <MESSAGE value="Implement &quot;incidence&quot; class." />
     <MESSAGE value="Implement &quot;outcome&quot; module + outbreak construction from DataFrame.&#10;&#10;- Continuous and Discrete distributions (Weibull, Lognorm and NegBinomial)&#10;- Parameter tuner for the dual model&#10;- Oxford + JSSE data modules" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement &quot;outcome&quot; module + outbreak construction from DataFrame.&#10;&#10;- Continuous and Discrete distributions (Weibull, Lognorm and NegBinomial)&#10;- Parameter tuner for the dual model&#10;- Oxford + JSSE data modules" />
+    <MESSAGE value="Implement &quot;optimizer&quot; module and begun optimizations." />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement &quot;optimizer&quot; module and begun optimizations." />
   </component>
   <component name="WindowStateProjectService">
     <state x="304" y="187" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1593540659236">
@@ -316,50 +379,84 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="524" y="334" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1593538664112" />
-    <state x="653" y="248" key="#com.intellij.ide.util.MemberChooser" timestamp="1593436095523">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state x="484" y="-825" key="#com.intellij.ide.util.MemberChooser" timestamp="1594210456870">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
     </state>
-    <state x="653" y="248" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1593436095523" />
-    <state x="182" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1593447740829">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state x="484" y="-825" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594210456870" />
+    <state x="653" y="248" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1593610227563" />
+    <state x="-54" y="-1080" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1594288589671">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
     </state>
+    <state x="-54" y="-1080" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594288589671" />
     <state x="182" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1593447740829" />
-    <state x="578" y="279" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1593539763492">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state x="399" y="-793" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1594211966501">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
     </state>
+    <state x="399" y="-793" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594211966501" />
     <state x="578" y="279" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1593539763492" />
-    <state x="638" y="422" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog" timestamp="1593537155391">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state x="467" y="-646" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog" timestamp="1594288539022">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
     </state>
+    <state x="467" y="-646" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594288539022" />
     <state x="638" y="422" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1593537155391" />
-    <state x="417" y="100" key="CommitChangelistDialog2" timestamp="1593528562554">
+    <state x="417" y="100" key="CommitChangelistDialog2" timestamp="1593542769991">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="417" y="100" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1593528562554" />
-    <state width="1638" height="338" key="GridCell.Tab.0.bottom" timestamp="1593540662463">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state x="417" y="100" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1593542769991" />
+    <state x="26" y="-971" key="DiffContextDialog" timestamp="1594287911952">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
     </state>
+    <state x="26" y="-971" key="DiffContextDialog/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594287911952" />
+    <state width="1878" height="374" key="GridCell.Tab.0.bottom" timestamp="1594035083654">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
+    </state>
+    <state width="1878" height="374" key="GridCell.Tab.0.bottom/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594035083654" />
     <state width="1638" height="338" key="GridCell.Tab.0.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1593540662463" />
-    <state width="1638" height="338" key="GridCell.Tab.0.center" timestamp="1593540662462">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state width="1878" height="374" key="GridCell.Tab.0.center" timestamp="1594035083652">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
     </state>
+    <state width="1878" height="374" key="GridCell.Tab.0.center/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594035083652" />
     <state width="1638" height="338" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1593540662462" />
-    <state width="1638" height="338" key="GridCell.Tab.0.left" timestamp="1593540662461">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state width="1878" height="374" key="GridCell.Tab.0.left" timestamp="1594035083651">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
     </state>
+    <state width="1878" height="374" key="GridCell.Tab.0.left/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594035083651" />
     <state width="1638" height="338" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1593540662461" />
-    <state width="1638" height="338" key="GridCell.Tab.0.right" timestamp="1593540662462">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state width="1878" height="374" key="GridCell.Tab.0.right" timestamp="1594035083653">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
     </state>
+    <state width="1878" height="374" key="GridCell.Tab.0.right/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594035083653" />
     <state width="1638" height="338" key="GridCell.Tab.0.right/0.0.1680.1050@0.0.1680.1050" timestamp="1593540662462" />
-    <state x="538" y="280" width="604" height="490" key="find.popup" timestamp="1593539618010">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state width="1878" height="374" key="GridCell.Tab.1.bottom" timestamp="1594035083657">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
     </state>
+    <state width="1878" height="374" key="GridCell.Tab.1.bottom/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594035083657" />
+    <state width="1878" height="374" key="GridCell.Tab.1.center" timestamp="1594035083655">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
+    </state>
+    <state width="1878" height="374" key="GridCell.Tab.1.center/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594035083655" />
+    <state width="1878" height="374" key="GridCell.Tab.1.left" timestamp="1594035083655">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
+    </state>
+    <state width="1878" height="374" key="GridCell.Tab.1.left/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594035083655" />
+    <state width="1878" height="374" key="GridCell.Tab.1.right" timestamp="1594035083656">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
+    </state>
+    <state width="1878" height="374" key="GridCell.Tab.1.right/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594035083656" />
+    <state x="492" y="-831" key="RollbackChangesDialog" timestamp="1594287921506">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="492" y="-831" key="RollbackChangesDialog/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594287921506" />
+    <state x="353" y="-792" width="691" height="554" key="find.popup" timestamp="1594294223295">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="353" y="-792" width="691" height="554" key="find.popup/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594294223295" />
     <state x="538" y="280" width="604" height="490" key="find.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1593539618010" />
-    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup" timestamp="1593542289202">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state x="315" y="-840" width="766" height="696" key="search.everywhere.popup" timestamp="1594294612977">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
     </state>
-    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1593542289202" />
+    <state x="315" y="-840" width="766" height="696" key="search.everywhere.popup/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594294612977" />
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1594039163962" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

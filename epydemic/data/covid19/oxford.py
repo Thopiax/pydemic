@@ -52,6 +52,6 @@ def _load_oxford(policies, suffix):
     result = {}
 
     for policy in policies:
-        result[policy] = pd.read_csv(DATA_ROOTPATH / f"clean/coronavirus_oxford_{policy}_{suffix}.csv")
+        result[policy] = pd.read_csv(DATA_ROOTPATH / f"clean/coronavirus_oxford_{policy}_{suffix}.csv", index_col=0, parse_dates=[0])
 
     return result
