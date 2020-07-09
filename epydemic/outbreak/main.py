@@ -7,7 +7,6 @@ import pandas as pd
 from scipy.signal import find_peaks
 
 from utils.path import DATA_ROOTPATH
-from .time_window import OutbreakTimeWindow
 
 
 def _ffx_index(cumulative_x, threshold):
@@ -22,24 +21,56 @@ def _ffx_index(cumulative_x, threshold):
 class Outbreak:
     required_fields = ["cases", "deaths", "recoveries"]
 
-    def __init__(self, region: str, cases: pd.Series, deaths: pd.Series, recoveries: pd.Series,
-                 smoothing_window: int = 3, df: Optional[pd.DataFrame] = None, **kwargs):
-        self._df: pd.DataFrame = pd.DataFrame({"cases": cases, "deaths": deaths, "recoveries": recoveries, **kwargs})
+    def __init__(self, region: str, cases: Optional[pd.Series] = None, deaths: Optional[pd.Series] = None,
+                 recoveries: Optional[pd.Series] = None, df: Optional[pd.DataFrame] = None, smoothing_window: int = 3, **kwargs):
+
         self.region = region
 
-        # join with df if attribute present
-        if df is not None:
-            self._df = self._df.join(df)
+        if (cases is None) and (deaths is None) and (recoveries is None):
+            assert df is not None
+            assert all(field in df.columns for field in Outbreak.required_fields)
+
+            self._df: pd.DataFrame = df
+        else:
+            self._df: pd.DataFrame = pd.DataFrame({"cases": cases, "deaths": deaths, "recoveries": recoveries, **kwargs})
+
+            # join with df if attribute present
+            if df is not None:
+                self._df = self._df.join(df)
 
         # construct the cumulative columns if they are not present in the df
         for field in Outbreak.required_fields:
             if f"cumulative_{field}" not in self._df.columns:
                 self._df[f"cumulative_{field}"] = self._df[field].cumsum()
 
+        # must be set after df is created
         self.smoothing_window = smoothing_window
 
     def __len__(self):
         return self._df.shape[0]
+
+    def __getitem__(self, item):
+        if type(item) is slice:
+            return Outbreak(
+                self.region,
+                df=self._df.iloc[item]
+            )
+
+        return getattr(self, item)
+
+    def __getattr__(self, item):
+        if item in self._df.columns:
+            return self._df[item]
+
+        if item.startswith("smooth"):
+            item = item[item.find("_") + 1:]
+            return self._smooth_df[item]
+
+        return self.__getattribute__(item)
+
+    @cached_property
+    def start(self):
+        return self._df.index.min()
 
     @cached_property
     def resolved_case_rate(self):
@@ -50,7 +81,7 @@ class Outbreak:
         return self._df
 
     @cached_property
-    def peak_id(self):
+    def peak_date(self):
         # extract smooth peak idx (normalize daily anomalies due to changes in counting strategies...)
         smooth_peak_idx, _ = find_peaks(self.smooth_deaths, prominence=1)
 
@@ -73,7 +104,7 @@ class Outbreak:
 
     @cached_property
     def is_peak_reached(self):
-        return self.peak_id != -1
+        return self.peak_date != -1
 
     def _verify_peak(self, peak_id, min_gradient_since_peak_threshold=0.05, min_days_since_peak_threshold=7):
         peak_deaths = self.smooth_deaths.iloc[peak_id]
@@ -94,14 +125,15 @@ class Outbreak:
         assert 0 < smoothing_window < 60
 
         self._smoothing_window = smoothing_window
-        self._smooth_df = self._df.copy().rolling(self.smoothing_window, center=True).mean().dropna()
+        self._smooth_df = self._build_smooth_df(smoothing_window)
 
-    def expanding_windows(self, start=0, window_size=7, **kwargs):
-        # base otw is useful for burn-in
-        base_otw = OutbreakTimeWindow(self, **kwargs)
-        expanding_cutoffs = np.arange(base_otw.start + window_size, len(self), window_size)
+    def _build_smooth_df(self, smoothing_window):
+        return self.df.copy().rolling(smoothing_window, center=True).mean().dropna()
 
-        return [OutbreakTimeWindow(self, start=start, end=t) for t in expanding_cutoffs]
+    def expanding_cutoffs(self, start: int = 0, window_size: int = 7, ffx: int = 10) -> np.ndarray:
+        burn_in = self.ffx(ffx, x_type="deaths")
+
+        return np.arange(burn_in + start, len(self), window_size)
 
     def ffx(self, *xs, x_type="cases"):
         cumulative_x = self._df[f"cumulative_{x_type}"]
@@ -111,50 +143,21 @@ class Outbreak:
 
         return _ffx_index(cumulative_x, xs[0])
 
-    def __getitem__(self, item):
-        if type(item) is slice:
-            return self._df.iloc[item]
-
-        return getattr(self, item)
-
-    def __getattr__(self, item):
-        if item in self._df.columns:
-            return self._df[item]
-
-        if item.startswith("smooth"):
-            item = item[item.find("_") + 1:]
-            return self._smooth_df[item]
-
-        return self.__getattribute__(item)
-
     @staticmethod
-    def from_df(df: pd.DataFrame):
-        assert all(field in df.columns for field in Outbreak.required_fields)
-
-        other_columns = df[df.columns[~df.columns.isin(Outbreak.required_fields)]]
-
-        return Outbreak(
-            df.name,
-            df["cases"],
-            df["deaths"],
-            df["recoveries"],
-            df=other_columns
-        )
-
-    @staticmethod
-    def from_csv(region):
-        filepath = f"./data/coronavirus/{region}.csv"
+    def from_csv(region, epidemic="covid"):
+        filepath = DATA_ROOTPATH / f"{epidemic}/{region}.csv"
 
         if os.path.isfile(filepath):
-            outbreak_df = pd.read_csv(filepath, index_col=0)
-            outbreak_df.index = pd.to_timedelta(outbreak_df.index)
-            outbreak_df.name = region
+            outbreak_df = pd.read_csv(filepath, index_col=0, parse_dates=[0])
 
-            return Outbreak.from_df(outbreak_df)
+            return Outbreak(region, df=outbreak_df)
 
         raise Exception(f"File for {region} not found.")
 
-    def to_csv(self):
-        self._df.to_csv(DATA_ROOTPATH / f"coronavirus/{self.region}.csv")
-        self._smooth_df.to_csv(DATA_ROOTPATH / f"coronavirus/{self.region}_s{self.smoothing_window}.csv")
+    def to_csv(self, epidemic="covid"):
+        if os.path.exists(DATA_ROOTPATH / f"{epidemic}") is False:
+            os.makedirs(DATA_ROOTPATH / f"{epidemic}")
+
+        self._df.to_csv(DATA_ROOTPATH / f"{epidemic}/{self.region}.csv")
+        self._smooth_df.to_csv(DATA_ROOTPATH / f"{epidemic}/{self.region}_s{self.smoothing_window}.csv")
 
