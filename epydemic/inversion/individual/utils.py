@@ -3,7 +3,7 @@ import pandas as pd
 import scipy
 from scipy.stats import stats
 
-from .exceptions import InvalidParameters
+from .exceptions import InvalidParametersError
 
 MAX_DEATH_DELAY_THRESHOLD = 60 # days
 MAX_DEATH_DELAY_VARIANCE = 900 # days => std < 30 days
@@ -12,7 +12,7 @@ MAX_PPF = 0.999 # 99.9 % of occurences happen before this day
 
 def verify_distribution(rv: stats):
     if rv.median() > MAX_DEATH_DELAY_THRESHOLD or rv.var() > MAX_DEATH_DELAY_VARIANCE:
-        raise InvalidParameters
+        raise InvalidParametersError
 
     return True
 

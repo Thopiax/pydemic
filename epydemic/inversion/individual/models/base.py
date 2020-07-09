@@ -3,7 +3,7 @@ from typing import Optional, List, NamedTuple
 
 import numpy as np
 
-from epydemic.inversion.individual.exceptions import InvalidParameters
+from epydemic.inversion.individual.exceptions import InvalidParametersError
 
 
 class BaseIndividualModel(ABC):
@@ -61,13 +61,13 @@ class BaseIndividualModel(ABC):
     @abstractmethod
     def _build_model(self, **kwargs):
         if self.is_valid is False:
-            raise InvalidParameters
+            raise InvalidParametersError
 
         pass
 
     @abstractmethod
     def describe(self):
         if self.is_valid is False:
-            raise InvalidParameters
+            raise InvalidParametersError
 
         pass

@@ -4,13 +4,13 @@ import pandas as pd
 import numpy as np
 
 from epydemic.inversion.individual import BaseIndividualModel, FatalityIndividualModel
-from epydemic.outbreak import OutbreakTimeWindow
+from epydemic.outbreak import OutbreakSlice
 
 
 class BasePopulationModel(ABC):
     IndividualModel = BaseIndividualModel
 
-    def __init__(self, otw: OutbreakTimeWindow, individual_model: Optional[BaseIndividualModel] = None,
+    def __init__(self, otw: OutbreakSlice, individual_model: Optional[BaseIndividualModel] = None,
                  verbose: bool = True, random_state: int = 1, **kwargs):
 
         self.otw = otw

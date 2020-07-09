@@ -18,7 +18,7 @@ def plot_individual_rates(model: BaseIndividualModel, region: str, xlim_upper: i
     xlim_upper_padding = xlim_upper - len(model.fatality_rate)
 
     if xlim_upper_padding > 0:
-        # pad fatality rate with zeros
+        # pad cfr rate with zeros
         fatality_rate = np.append(fatality_rate, [0 for _ in range(xlim_upper_padding)])
         # pad hazard rate with last value
         hazard_rate = np.append(hazard_rate, [hazard_rate[-1] for _ in range(xlim_upper_padding)])

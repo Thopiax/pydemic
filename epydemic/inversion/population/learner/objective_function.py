@@ -2,7 +2,7 @@ from typing import Optional
 
 from epydemic.inversion.population.learner.loss import LearnerLoss, MASELearnerLoss
 from epydemic.inversion.population.models.base import BasePopulationModel
-from epydemic.inversion.individual.exceptions import InvalidParameters
+from epydemic.inversion.individual.exceptions import InvalidParametersError
 
 
 class SingleLearnerObjectiveFunction(object):
@@ -25,6 +25,6 @@ class SingleLearnerObjectiveFunction(object):
 
             return sum(self.loss(y_true[i], y_pred[i], sample_weight=self.loss_weights) for i in range(len(y_true)))
 
-        except InvalidParameters:
-            # return a large penalty for parameters that lead to invalid fatality rate
+        except InvalidParametersError:
+            # return a large penalty for parameters that lead to invalid cfr rate
             return 1_000
