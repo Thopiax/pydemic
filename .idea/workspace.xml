@@ -20,51 +20,37 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2c516fc1-827c-428b-a01c-e5194546adce" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/epydemic/cfr/models/complement.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/data/covid19/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/exceptions.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/ensemble/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/ensemble/dual.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/ensemble/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/exceptions.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/fatality.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/epydemic/outcome/models/recovery.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/rafa.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/rafa.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/data/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/data/jsse.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/data/covid19/jsse.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/data/oxford.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/data/covid19/oxford.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/exceptions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/models/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/models/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/plot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/individual/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/learner/objective_function.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/learner/objective_function.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/models/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/fatality.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/models/fatality.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/plot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/inversion/population/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outbreak/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outbreak/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/cfr/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/cfr/models/resolved.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/models/resolved.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/exceptions.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/exceptions.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/models/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/models/base.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/models/dual.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/models/fatality.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/plot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/individual/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/learner/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/learner/learner.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/learner/loss.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/learner/objective_function.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/base.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/dual.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/fatality.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/models/simulated.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/plot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/inversion/population/utils.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/epydemic/outbreak/epidemic.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outbreak/epidemic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outbreak/outbreak.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outbreak/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outbreak/time_window.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/continuous/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/continuous/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/discrete/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/discrete/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/models/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/naive.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/models/naive.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/estimator/resolved.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/models/resolved.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/cfr/evaluator.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/cfr/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/dual.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/optimizer/cache.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/cache.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/optimizer/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/loss.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/optimizer/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/fatality.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/fatality.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/recovery.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/recovery.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/epydemic/scripts/plot_oecd_cfr_estimates.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/scripts/plot_oecd_cfr_estimates.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/scripts/sandbox.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/scripts/sandbox.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,10 +80,6 @@
         <option value="git@github.com:Thopiax/CoronavirusMortalityRate.git" />
       </set>
     </option>
-  </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/epydemic/inversion/population/learner/learner.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/epydemic/inversion/population/models/simulated.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="JupyterTrust" id="0de483fa-843b-4de9-baf6-29bcfc5b8faa" />
   <component name="ProjectId" id="1crM4WHZNMsSTNcTki1DCBmKC8P" />
@@ -255,7 +237,7 @@
       <workItem from="1593507978391" duration="20427000" />
       <workItem from="1593553332499" duration="11106000" />
       <workItem from="1594024395831" duration="6847000" />
-      <workItem from="1594037683439" duration="20839000" />
+      <workItem from="1594037683439" duration="25172000" />
     </task>
     <task id="LOCAL-00001" summary="Remove Archive">
       <created>1591292931339</created>
@@ -327,7 +309,35 @@
       <option name="project" value="LOCAL" />
       <updated>1593542770693</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Epidemic is now a wrapper for an outbreak dictionary.">
+      <created>1594296942203</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1594296942203</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Data module has covid19 submodule.">
+      <created>1594296975775</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1594296975775</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Update cfr models to new library API.">
+      <created>1594297009109</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1594297009109</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Renaming + implement outcome models.">
+      <created>1594297026285</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1594297026285</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -368,7 +378,11 @@
     <MESSAGE value="Implement &quot;incidence&quot; class." />
     <MESSAGE value="Implement &quot;outcome&quot; module + outbreak construction from DataFrame.&#10;&#10;- Continuous and Discrete distributions (Weibull, Lognorm and NegBinomial)&#10;- Parameter tuner for the dual model&#10;- Oxford + JSSE data modules" />
     <MESSAGE value="Implement &quot;optimizer&quot; module and begun optimizations." />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement &quot;optimizer&quot; module and begun optimizations." />
+    <MESSAGE value="Epidemic is now a wrapper for an outbreak dictionary." />
+    <MESSAGE value="Data module has covid19 submodule." />
+    <MESSAGE value="Update cfr models to new library API." />
+    <MESSAGE value="Renaming + implement outcome models." />
+    <option name="LAST_COMMIT_MESSAGE" value="Renaming + implement outcome models." />
   </component>
   <component name="WindowStateProjectService">
     <state x="304" y="187" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1593540659236">
@@ -399,9 +413,10 @@
     </state>
     <state x="467" y="-646" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594288539022" />
     <state x="638" y="422" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1593537155391" />
-    <state x="417" y="100" key="CommitChangelistDialog2" timestamp="1593542769991">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state x="215" y="-977" key="CommitChangelistDialog2" timestamp="1594297026027">
+      <screen x="-262" y="-1080" width="1920" height="1080" />
     </state>
+    <state x="215" y="-977" key="CommitChangelistDialog2/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594297026027" />
     <state x="417" y="100" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1593542769991" />
     <state x="26" y="-971" key="DiffContextDialog" timestamp="1594287911952">
       <screen x="-262" y="-1080" width="1920" height="1080" />
