@@ -11,7 +11,7 @@ from skopt.space import Dimension, Real
 
 from cfr.models.base import BaseCFRModel
 from outbreak import Outbreak
-from outcome.distribution.main import BaseOutcomeDistribution
+from outcome.distribution.base import BaseOutcomeDistribution
 from outcome.models.exceptions import TrivialTargetError
 from outcome.optimizer.loss import MeanSquaredLogErrorLoss, MeanAbsoluteScaledErrorLoss
 from outcome.optimizer.main import OutcomeOptimizer

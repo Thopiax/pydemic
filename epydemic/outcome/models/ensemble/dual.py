@@ -6,7 +6,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 from epydemic.outbreak import Outbreak
-from epydemic.outcome.distribution.main import BaseOutcomeDistribution
+from epydemic.outcome.distribution.base import BaseOutcomeDistribution
 from epydemic.outcome.optimizer.main import OutcomeOptimizer
 from outcome.models.ensemble.main import verify_predictions, OutcomeRegression
 from outcome.models.exceptions import TrivialTargetError

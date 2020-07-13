@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from skopt.space import Dimension
 
 from outbreak import Outbreak
-from outcome.distribution.main import BaseOutcomeDistribution
+from outcome.distribution.base import BaseOutcomeDistribution
 from outcome.models.exceptions import InvalidPredictionError
 
 

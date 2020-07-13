@@ -14,7 +14,8 @@ class RecoveryOutcomeModel(BaseOutcomeModel):
 
     @lru_cache(maxsize=8)
     def target(self, t: int, start: int = 0) -> np.array:
-        return self.outbreak.cumulative_cases.iloc[start:(t + 1)] - self.outbreak.cumulative_recoveries.iloc[start:(t + 1)]
+        # return recovery incidence from start up to t inclusive
+        return self.outbreak.recoveries.iloc[start:(t + 1)]
 
     def predict(self, t: int, start: int = 0) -> np.array:
         self._verify_alpha(self.alpha, t, start)

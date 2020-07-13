@@ -5,7 +5,7 @@ from abc import ABC
 
 from scipy.stats._distn_infrastructure import rv_frozen
 
-from epydemic.outcome.distribution.main import BaseOutcomeDistribution
+from epydemic.outcome.distribution.base import BaseOutcomeDistribution
 
 
 class DiscreteOutcomeDistribution(BaseOutcomeDistribution, ABC):

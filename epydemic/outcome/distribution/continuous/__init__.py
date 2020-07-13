@@ -5,7 +5,7 @@ from abc import ABC
 
 from scipy.stats import rv_frozen
 
-from outcome.distribution.main import BaseOutcomeDistribution
+from outcome.distribution.base import BaseOutcomeDistribution
 
 
 class ContinuousOutcomeDistribution(BaseOutcomeDistribution, ABC):

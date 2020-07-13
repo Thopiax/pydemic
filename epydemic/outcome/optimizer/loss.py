@@ -8,13 +8,6 @@ from outcome.distribution.exceptions import InvalidParameterError
 from sklearn.metrics import mean_absolute_error, mean_squared_error, mean_squared_log_error
 
 
-def build_scaling_coefficient(y_true):
-    if y_true.shape[0] == 1:
-        return y_true[0]
-    else:
-        return np.mean(np.abs(np.diff(y_true)))
-
-
 class BaseOutcomeLoss(ABC):
     def __init__(self, model, t: int, start: int = 0, sample_weight: Optional[np.array] = None):
         self.model = model
@@ -65,6 +58,12 @@ class MeanAbsoluteErrorLoss(BaseOutcomeLoss):
 
 
 class MeanAbsoluteScaledErrorLoss(BaseOutcomeLoss):
+
+    def __init__(self, model, t: int, **kwargs):
+        super().__init__(model, t, **kwargs)
+
+        self.scaling_coefficient = self.y_true.sum()
+
     @property
     def tag(self):
         return f"mase__{self.start}_{self.t}"
