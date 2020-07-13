@@ -21,17 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2c516fc1-827c-428b-a01c-e5194546adce" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/continuous/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/continuous/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/discrete/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/discrete/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/discrete/negbinomial.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/discrete/negbinomial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/distribution/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/distribution/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/ensemble/dual.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/ensemble/dual.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/ensemble/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/ensemble/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/fatality.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/fatality.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/outcome/models/recovery.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/models/recovery.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/epydemic/outcome/optimizer/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/outcome/optimizer/loss.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/epydemic/scripts/sandbox.py" beforeDir="false" afterPath="$PROJECT_DIR$/epydemic/scripts/sandbox.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -226,7 +216,7 @@
       <workItem from="1594024395831" duration="6847000" />
       <workItem from="1594037683439" duration="42592000" />
       <workItem from="1594400912773" duration="7895000" />
-      <workItem from="1594628017098" duration="324000" />
+      <workItem from="1594628017098" duration="442000" />
     </task>
     <task id="LOCAL-00001" summary="Remove Archive">
       <created>1591292931339</created>
@@ -333,7 +323,14 @@
       <option name="project" value="LOCAL" />
       <updated>1594307850077</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="NegBinomial with Integer Dimension + Simple Scaling Coef.">
+      <created>1594628377713</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1594628377713</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -379,7 +376,8 @@
     <MESSAGE value="Update cfr models to new library API." />
     <MESSAGE value="Renaming + implement outcome models." />
     <MESSAGE value="Remove inversion module.&#10;&#10;The outcome module has replaced all of its functionalities." />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove inversion module.&#10;&#10;The outcome module has replaced all of its functionalities." />
+    <MESSAGE value="NegBinomial with Integer Dimension + Simple Scaling Coef." />
+    <option name="LAST_COMMIT_MESSAGE" value="NegBinomial with Integer Dimension + Simple Scaling Coef." />
   </component>
   <component name="WindowStateProjectService">
     <state x="304" y="187" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1593540659236">
@@ -410,11 +408,11 @@
     </state>
     <state x="467" y="-646" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594288539022" />
     <state x="638" y="422" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1593537155391" />
-    <state x="417" y="100" key="CommitChangelistDialog2" timestamp="1594307849589">
+    <state x="417" y="100" key="CommitChangelistDialog2" timestamp="1594628377248">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="215" y="-977" key="CommitChangelistDialog2/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594297026027" />
-    <state x="417" y="100" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1594307849589" />
+    <state x="417" y="100" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1594628377248" />
     <state x="43" y="210" width="1344" height="840" key="DiffContextDialog" timestamp="1594558237614">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
@@ -473,11 +471,11 @@
     </state>
     <state x="353" y="-792" width="691" height="554" key="find.popup/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594294223295" />
     <state x="538" y="280" width="604" height="490" key="find.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1594628149286" />
-    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup" timestamp="1594628277893">
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup" timestamp="1594628387000">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="315" y="-840" width="766" height="696" key="search.everywhere.popup/0.0.1680.1050/-262.-1080.1920.1080@-262.-1080.1920.1080" timestamp="1594294612977" />
-    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1594628277893" />
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1594628387000" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

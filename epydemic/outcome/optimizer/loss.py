@@ -15,10 +15,10 @@ class BaseOutcomeLoss(ABC):
         self.t = t
         self.start = start
 
-        self.sampled_weight = sample_weight
+        self.sample_weight = sample_weight
 
         if self.sample_weight is not None:
-            self.sampled_weight = self.sampled_weight.iloc[start:(t + 1)]
+            self.sample_weight = self.sample_weight.iloc[start:(t + 1)]
 
     def __call__(self, parameters):
         try:
@@ -43,8 +43,7 @@ class BaseOutcomeLoss(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _loss(self, sample_weight=None):
-        yield
+    def _loss(self):
         raise NotImplementedError
 
 
@@ -54,7 +53,7 @@ class MeanAbsoluteErrorLoss(BaseOutcomeLoss):
         return f"mae__{self.start}_{self.t}"
 
     def _loss(self):
-        return mean_absolute_error(self.y_true, self.y_pred, sample_weight=self.sampled_weight)
+        return mean_absolute_error(self.y_true, self.y_pred, sample_weight=self.sample_weight)
 
 
 class MeanAbsoluteScaledErrorLoss(BaseOutcomeLoss):
@@ -62,16 +61,15 @@ class MeanAbsoluteScaledErrorLoss(BaseOutcomeLoss):
     def __init__(self, model, t: int, **kwargs):
         super().__init__(model, t, **kwargs)
 
-        self.scaling_coefficient = self.y_true.sum()
+        self._scaling_coefficient = self.y_true.sum()
 
     @property
     def tag(self):
         return f"mase__{self.start}_{self.t}"
 
     def _loss(self):
-        scaling_coefficient = build_scaling_coefficient(self.y_true)
-
-        return mean_absolute_error(self.y_true, self.y_pred, sample_weight=self.sample_weight) / scaling_coefficient
+        return mean_absolute_error(self.y_true, self.y_pred, sample_weight=self.sample_weight) \
+               / self._scaling_coefficient
 
 
 class MeanSquaredLogErrorLoss(BaseOutcomeLoss):
