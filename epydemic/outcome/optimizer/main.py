@@ -1,17 +1,31 @@
-from skopt import gbrt_minimize, optimizer, gp_minimize
+import numpy as np
+
+from typing import Optional, List, Tuple, Collection
+
+from skopt import gbrt_minimize, optimizer, gp_minimize, Space
 from skopt.callbacks import DeltaYStopper, DeadlineStopper
 
 from epydemic.outcome.optimizer.cache import OutcomeOptimizerCache
 from epydemic.outcome.optimizer.loss import BaseOutcomeLoss
 from epydemic.outcome.optimizer.utils import get_initial_points
-from outcome.models.base import BaseOutcomeModel
+
+
+def add_initial_points(x0: Optional[List[Collection[float]]], y0: Optional[List[Collection[float]]],
+                       loss, initial_parameter_points: Optional[List[Collection[float]]]):
+    if initial_parameter_points is None or len(initial_parameter_points) == 0:
+        return x0, y0
+
+    initial_loss_points = [loss(parameters=parameter_point) for parameter_point in initial_parameter_points]
+
+    if x0 is None and y0 is None:
+        return initial_parameter_points, initial_loss_points
+
+    return x0 + initial_parameter_points, y0 + initial_loss_points
 
 
 class OutcomeOptimizer:
-    def __init__(self, model: BaseOutcomeModel, skopt_minimize: optimizer = gbrt_minimize,
+    def __init__(self, model, skopt_minimize: optimizer = gbrt_minimize,
                  tag: str = "", verbose: bool = True, random_state: int = 1, **kwargs):
-
-        self.model = model
         self.dimensions = model.dimensions
 
         self.cache = OutcomeOptimizerCache(model.cache_path)
@@ -21,39 +35,38 @@ class OutcomeOptimizer:
 
         self.skopt_minimize = skopt_minimize
 
-        self.tag = f"{self.model.name}__{self.model.distribution.name}__{self.skopt_minimize.__name__}"
+        self.tag = f"{model.distribution.name}__{self.skopt_minimize.__name__}"
 
         if tag != "":
             self.tag += "__" + tag
 
-    def optimize(self, loss, n_calls=200, max_calls=500, n_random_starts=20, use_cache=True, dry_run=False, **kwargs):
-        tag = f"{self.tag}_{self.loss.tag}"
+    def load_cached_result(self, loss):
+        return self.cache.get(tag=f"{self.tag}_{loss.tag}")
 
-        cached_result = self.cache.get(tag)
-        if cached_result is not None:
-            if dry_run:
-                return cached_result
+    def cache_result(self, loss, result):
+        return self.cache.add(f"{self.tag}_{loss.tag}", result, to_disk=True)
 
-            x0, y0 = get_initial_points(cached_result)
-            n_past_calls = len(x0)
-        else:
-            x0, y0 = None, None
-            n_past_calls = 0
+    def optimize(self, loss: BaseOutcomeLoss, n_calls: int = 300, max_calls: int = 300, n_random_starts: int = 50,
+                 use_cache=True, initial_parameter_points: Optional[np.array] = None, delta: float = 0.001, **kwargs):
+        result = self.load_cached_result(loss)
+
+        x0, y0 = get_initial_points(result)
+        x0, y0 = add_initial_points(x0, y0, loss, initial_parameter_points)
 
         # ensure max_calls is respected over past calls
+        n_past_calls = 0 if x0 is None else len(x0)
         n_calls = min(n_calls, max_calls - n_past_calls)
 
-        # skopt minimize requires at least 20 calls
-        if n_calls < 20:
-            return cached_result
+        # skopt minimize requires at least the n_random_starts
+        if n_calls < n_random_starts:
+            return result
 
         result = self.skopt_minimize(loss, dimensions=self.dimensions, acq_func="LCB",
                                      n_calls=n_calls, n_random_starts=n_random_starts,
                                      verbose=self.verbose, random_state=self.random_state,
-                                     # callback=[DeltaYStopper(delta), DeadlineStopper(600)],
-                                     x0=x0, y0=y0, n_jobs=-1, **kwargs)
+                                     callback=[DeltaYStopper(delta)], x0=x0, y0=y0, n_jobs=-1, **kwargs)
 
         if use_cache:
-            self.cache.add(tag, result, to_disk=True)
+            self.cache_result(loss, result)
 
         return result

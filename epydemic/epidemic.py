@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-from typing import Optional, Dict, List
+from typing import Dict, List
 
-from .main import Outbreak
+from outbreak import Outbreak
 
 
 def _build_regions(*dfs) -> List[str]:
@@ -13,7 +13,7 @@ def _build_regions(*dfs) -> List[str]:
 
 class Epidemic:
     def __init__(self, name: str, cases: pd.DataFrame, deaths: pd.DataFrame, recoveries: pd.DataFrame,
-                 **dfs: Dict[str, pd.DataFrame]):
+                 **dfs: pd.DataFrame):
         self.name: str = name
 
         self.regions = _build_regions(cases, deaths, recoveries)

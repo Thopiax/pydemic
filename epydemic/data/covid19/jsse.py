@@ -1,9 +1,7 @@
-import os
-
 import pandas as pd
 
 from epydemic.data.covid19.oxford import load_oxford_policy_measures, load_oxford_policy_indices
-from epydemic.outbreak.epidemic import Epidemic
+from epidemic import Epidemic
 from epydemic.utils.path import DATA_ROOTPATH
 
 

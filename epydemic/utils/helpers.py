@@ -1,8 +1,6 @@
-import os
-
 import pandas as pd
 
-from epydemic.outbreak.epidemic import Epidemic
+from epidemic import Epidemic
 from epydemic.utils.path import DATA_ROOTPATH
 
 

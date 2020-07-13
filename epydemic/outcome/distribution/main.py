@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from abc import ABC, abstractmethod
 
 from scipy.stats._distn_infrastructure import rv_frozen
-from typing import Optional, NamedTuple, Iterable, Union, Collection
+from typing import Optional, NamedTuple, Iterable, Union, Collection, List
 
 from skopt.space import Dimension
 
@@ -48,7 +48,7 @@ class BaseOutcomeDistribution(ABC):
         return len(self.dimensions)
 
     @property
-    def parameters(self) -> Optional[NamedTuple]:
+    def parameters(self) -> NamedTuple:
         if self._parameters is None:
             return None
 
@@ -126,7 +126,7 @@ class BaseOutcomeDistribution(ABC):
         plt.legend()
 
     @property
-    def dimensions(self) -> Collection[Dimension]:
+    def dimensions(self) -> List[Dimension]:
         raise NotImplementedError
 
     def verify_parameters(self, parameters: NamedTuple) -> bool:

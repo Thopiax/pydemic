@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from functools import lru_cache
 
 import numpy as np
 import pandas as pd
@@ -9,13 +10,18 @@ from epydemic.outbreak import Outbreak
 class BaseCFRModel(ABC):
     name: str = "base"
 
-    def __init__(self, outbreak: Outbreak):
+    def __init__(self, outbreak: Outbreak, corrected: bool = False):
         self.outbreak = outbreak
 
-    @abstractmethod
-    def estimate(self, t: int) -> float:
-        # if period of analysis is in the future, return NaN.
-        if t > len(self.outbreak):
-            return np.nan()
+        self.corrected = corrected
 
+    @property
+    def name(self):
+        if self.corrected:
+            return self.__class__.name + "_corrected"
+
+        return self.__class__.name
+
+    @abstractmethod
+    def estimate(self, t: int, start: int = 0) -> float:
         pass

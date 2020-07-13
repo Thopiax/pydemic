@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from scipy.stats import rv_frozen
 
 from outcome.distribution.exceptions import InvalidParameterError
 
@@ -9,7 +8,7 @@ MAX_RATE_SUPPORT_SIZE = 60  # days
 MAX_RATE_VARIANCE = 1000  # days => std < 30 days
 
 
-def verify_random_variable(random_variable: rv_frozen):
+def verify_random_variable(random_variable):
     pass
 
 
@@ -18,7 +17,7 @@ def verify_rate(rate: pd.Series):
         raise InvalidParameterError
 
 
-def describe(random_variable: rv_frozen):
+def describe(random_variable):
     mean, var, skew, kurtosis = random_variable.stats(moments="mvsk")
 
     interval_size = 0.95

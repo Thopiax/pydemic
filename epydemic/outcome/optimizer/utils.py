@@ -1,6 +1,6 @@
 import os
 from pathlib import PosixPath
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Union
 
 import numpy as np
 from scipy.optimize import OptimizeResult
@@ -19,7 +19,7 @@ def load_result(tag: str, path: PosixPath = CACHE_ROOTPATH, extension: str = "pk
     return None
 
 
-def save_result(tag: str, result, path: PosixPath = CACHE_ROOTPATH, extension: str = "pkl"):
+def save_result(tag: str, result: OptimizeResult, path: PosixPath = CACHE_ROOTPATH, extension: str = "pkl"):
     filepath = path / f"{tag}.{extension}"
 
     if os.path.exists(path) is False:
@@ -29,16 +29,19 @@ def save_result(tag: str, result, path: PosixPath = CACHE_ROOTPATH, extension: s
     dump(result, filepath, compress=True)
 
 
-def get_optimal_parameters(result) -> Optional[List[float]]:
-    return result.x
+def get_optimal_parameters(result: Union[OptimizeResult, None]) -> List:
+    return result.x if result is not None else []
 
 
-def get_optimal_loss(result) -> Optional[float]:
-    return result.fun
+def get_optimal_loss(result: Union[OptimizeResult, None]) -> float:
+    return result.fun if result is not None else -1.0
 
 
-def get_initial_points(result: OptimizeResult) -> Tuple[Optional[np.ndarray], Optional[np.ndarray]]:
-    return result.x_iters, result.func_vals
+def get_initial_points(result: Union[OptimizeResult, None]) -> Union[Tuple[List, List], Tuple[None, None]]:
+    if result is None:
+        return None, None
+
+    return list(result.x_iters), list(result.func_vals)
 
 
 def get_expected_minimum(result: OptimizeResult, **kwargs) -> Optional[List[float]]:

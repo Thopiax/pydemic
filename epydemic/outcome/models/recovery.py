@@ -1,26 +1,31 @@
+import numpy as np
 from functools import lru_cache
+from typing import Type
 
+from cfr.models.naive import FatalityCFRModel
+from epydemic.cfr.models.base import BaseCFRModel
+from outcome.distribution.exceptions import InvalidParameterError
 from outcome.models.base import BaseOutcomeModel
-from outcome.models.exceptions import TrivialTargetError
-from outcome.optimizer.loss import SquaredErrorLoss
-from outcome.optimizer.main import OutcomeOptimizer
 
 
 class RecoveryOutcomeModel(BaseOutcomeModel):
     name: str = "recovery"
+    BoundingCFRModel: Type[BaseCFRModel] = FatalityCFRModel
 
-    @lru_cache
-    def target(self, t: int, start: int = 0) -> int:
-        return self.outbreak.cumulative_recoveries.values[start:t]
+    @lru_cache(maxsize=8)
+    def target(self, t: int, start: int = 0) -> np.array:
+        return self.outbreak.cumulative_cases.iloc[start:(t + 1)] - self.outbreak.cumulative_recoveries.iloc[start:(t + 1)]
 
-    def fit(self, t: int, start: int = 0, verbose: bool = False, random_state: int = 1, **kwargs) -> None:
-        if self.target(t, start) == 0:
-            raise TrivialTargetError
+    def predict(self, t: int, start: int = 0) -> np.array:
+        self._verify_alpha(self.alpha, t, start)
 
-        optimizer = OutcomeOptimizer(self, verbose=verbose, random_state=random_state)
+        result = np.zeros(t - start)
 
-        loss = SquaredErrorLoss(self, t, start)
-        optimization_result = optimizer.optimize(loss, **kwargs)
+        for k in range(start, t + 1):
+            result[k - start] = self._predict_incidence(k)
 
-        return optimization_result
+        return (1 - self.alpha) * result
 
+    def _verify_alpha(self, alpha: float, t: int, start: int = 0) -> None:
+        if alpha < self._cfr_bounds[t]:
+            raise InvalidParameterError
