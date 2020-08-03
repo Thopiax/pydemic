@@ -27,8 +27,8 @@ class BaseOutcomeModel(ABC):
     def __init__(self, outbreak: Outbreak, distribution: BaseOutcomeDistribution):
         self.outbreak = outbreak
 
-        cfr_model = self.BoundingCFRModel(outbreak)
-        self._cfr_bounds: pd.Series = pd.Series([cfr_model.estimate(t) for t in range(len(outbreak))])
+        # cfr_model = self.BoundingCFRModel(outbreak)
+        # self._cfr_bounds: pd.Series = pd.Series([cfr_model.estimate(t) for t in range(len(outbreak))])
         self._optimal_parameters: pd.DataFrame = pd.DataFrame(columns=self.parameter_names)
 
         self.alpha: float = -1.0
@@ -63,7 +63,7 @@ class BaseOutcomeModel(ABC):
         # sum the expected number of deaths at t, for each of the last K days, including t
         return (self.domain[(t + 1) - K:(t + 1)] * self.distribution.incidence_rate[K - 1::-1]).sum()
 
-    def fit(self, t: int, start: int = 0, verbose: bool = False, random_state: int = 1, **kwargs) -> OptimizeResult:
+    def fit(self, t: int, start: int = 0, verbose: bool = True, random_state: int = 1, set_parameters: bool = True, **kwargs) -> OptimizeResult:
         optimizer = OutcomeOptimizer(self, verbose=verbose, random_state=random_state)
 
         loss = MeanAbsoluteScaledErrorLoss(self, t, start=start)
@@ -72,6 +72,9 @@ class BaseOutcomeModel(ABC):
         optimization_result = optimizer.optimize(loss, initial_parameter_points=initial_parameter_points, **kwargs)
 
         self._optimal_parameters.loc[t, :] = get_optimal_parameters(optimization_result)
+
+        if set_parameters:
+            self.parameters = self._optimal_parameters.loc[t, :]
 
         return optimization_result
 

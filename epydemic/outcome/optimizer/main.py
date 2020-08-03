@@ -47,7 +47,7 @@ class OutcomeOptimizer:
         return self.cache.add(f"{self.tag}_{loss.tag}", result, to_disk=True)
 
     def optimize(self, loss: BaseOutcomeLoss, n_calls: int = 300, max_calls: int = 300, n_random_starts: int = 50,
-                 use_cache=True, initial_parameter_points: Optional[np.array] = None, delta: float = 0.001, **kwargs):
+                 use_cache=True, initial_parameter_points: Optional[np.array] = None, delta: float = 0.0, **kwargs):
         result = self.load_cached_result(loss)
 
         x0, y0 = get_initial_points(result)

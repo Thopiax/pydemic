@@ -20,13 +20,12 @@ class FatalityOutcomeModel(BaseOutcomeModel):
     def predict(self, t: int, start: int = 0) -> np.array:
         self._verify_alpha(self.alpha, t, start)
 
-        result = np.zeros(t - start)
+        result = np.zeros(t + 1 - start)
 
-        for k in range(start, t + 1):
-            result[k - start] = self._predict_incidence(k)
+        for k in range(t + 1):
+            result[k] = self._predict_incidence(k + start)
 
         return self.alpha * result
 
     def _verify_alpha(self, alpha: float, t: int, start: int = 0) -> None:
-        if alpha > self._cfr_bounds[t]:
-            raise InvalidParameterError
+        return True
