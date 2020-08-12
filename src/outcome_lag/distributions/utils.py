@@ -4,7 +4,7 @@ import pandas as pd
 from outcome_lag.distributions.exceptions import InvalidParameterError
 
 MAX_RATE_PPF = 0.999  # only 1 in 1000 cases are not considered
-MAX_RATE_SUPPORT_SIZE = 60  # days
+MAX_SUPPORT_SIZE = 60  # days
 MAX_RATE_VARIANCE = 1000  # days => std < 30 days
 
 

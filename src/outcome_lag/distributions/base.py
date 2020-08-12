@@ -10,21 +10,20 @@ from typing import Optional, NamedTuple, Iterable, Union, List
 from skopt.space import Dimension
 
 from src.outcome_lag.distributions.exceptions import InvalidParameterError
-from outcome_lag.distributions.utils import MAX_RATE_PPF, MAX_RATE_SUPPORT_SIZE, verify_random_variable, verify_rate, \
+from outcome_lag.distributions.utils import MAX_RATE_PPF, MAX_SUPPORT_SIZE, verify_random_variable, verify_rate, \
     describe
 
 
-def build_support(max_rate_support_size: int = MAX_RATE_SUPPORT_SIZE,
-                  freq: Union[float, int] = 1) -> np.ndarray:
-    return np.arange(max_rate_support_size, step=freq)
+def build_support(max_support_size: int = MAX_SUPPORT_SIZE, freq: float = 1) -> np.ndarray:
+    return np.arange(max_support_size, step=freq)
 
 
 class BaseOutcomeLagDistribution(ABC):
     Parameters: Optional[NamedTuple] = None
     name: str = "base"
 
-    def __init__(self, *parameters, max_rate_support_size: int = MAX_RATE_SUPPORT_SIZE,
-                 max_rate_ppf: int = MAX_RATE_PPF, rate_support_offset: float = 0.5):
+    def __init__(self, *parameters, max_support_size: int = MAX_SUPPORT_SIZE,
+                 max_rate_ppf: int = MAX_RATE_PPF, support_offset: float = 0.5):
         self._parameters: Optional[NamedTuple] = None
         self.random_variable: Optional[rv_frozen] = None
 
@@ -33,8 +32,8 @@ class BaseOutcomeLagDistribution(ABC):
         self.incidence_rate: Optional[pd.Series] = None
         self.hazard_rate: Optional[pd.Series] = None
 
-        self.max_rate_support_size = max_rate_support_size
-        self.rate_support_offset = rate_support_offset
+        self.max_support_size = max_support_size
+        self.support_offset = support_offset
 
         self.max_rate_ppf = max_rate_ppf
 
@@ -66,15 +65,15 @@ class BaseOutcomeLagDistribution(ABC):
         self.random_variable = self.build_random_variable(self._parameters)
         verify_random_variable(self.random_variable)
 
-        self.support = build_support(max_rate_support_size=self.max_rate_support_size)
+        self.support = build_support(max_support_size=self.max_support_size)
 
         # build & verify outcome_lag rate
-        self.incidence_rate = self.build_incidence_rate(self.support, self.random_variable, offset=self.rate_support_offset)
+        self.incidence_rate = self.build_incidence_rate(self.support, self.random_variable, offset=self.support_offset)
         verify_rate(self.incidence_rate)
 
         # build & verify hazard rate
         self.hazard_rate = self.build_hazard_rate(self.support, self.random_variable, self.incidence_rate,
-                                             offset=self.rate_support_offset)
+                                                  offset=self.support_offset)
         verify_rate(self.hazard_rate)
 
     def build_parameters(self, parameters: Iterable[float]) -> NamedTuple:
@@ -93,7 +92,7 @@ class BaseOutcomeLagDistribution(ABC):
         raise NotImplementedError
 
     def plot_incidence(self, freq: float = 0.001, **kwargs):
-        support = build_support(freq=freq, max_rate_support_size=self.max_rate_support_size)
+        support = build_support(freq=freq, max_support_size=self.max_support_size)
         incidence_rate = self.build_incidence_rate(support, self.random_variable)
 
         self._plot_rate(self.incidence_rate, support, incidence_rate, **kwargs)
@@ -101,7 +100,7 @@ class BaseOutcomeLagDistribution(ABC):
         plt.show()
 
     def plot_hazard(self, freq: float = 0.001, **kwargs):
-        support = build_support(freq=freq, max_rate_support_size=self.max_rate_support_size)
+        support = build_support(freq=freq, max_support_size=self.max_support_size)
         incidence_rate = self.build_incidence_rate(support, self.random_variable)
         hazard_rate = self.build_hazard_rate(support, self.random_variable, incidence_rate)
 
@@ -116,7 +115,7 @@ class BaseOutcomeLagDistribution(ABC):
         plt.plot(hf_support, hf_rate, label=label, c=color, alpha=0.5)
 
         # plot probability dots
-        plt.hlines(rate, self.support, self.support + self.rate_support_offset, linestyles='--',
+        plt.hlines(rate, self.support, self.support + self.support_offset, linestyles='--',
                    colors='red')
 
         plt.bar(self.support, rate, width=0.3, alpha=0.6, color=color)

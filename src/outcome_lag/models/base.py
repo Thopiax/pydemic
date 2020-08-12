@@ -53,7 +53,7 @@ class BaseOutcomeModel(ABC):
         return Path(self.outbreak.region) / self.name
 
     def _predict_incidence(self, t: int) -> float:
-        K = np.minimum(t + 1, self.distribution.max_rate_support_size)
+        K = np.minimum(t + 1, self.distribution.max_support_size)
 
         # sum the expected number of deaths at t, for each of the last K days, including t
         return (self.domain[(t + 1) - K:(t + 1)] * self.distribution.incidence_rate[K - 1::-1]).sum()
