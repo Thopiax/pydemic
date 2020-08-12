@@ -1,1 +1,0 @@
-from .jsse import load_coronavirus_epidemic
