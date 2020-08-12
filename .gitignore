@@ -1,11 +1,11 @@
 
+/.idea/
+
 /.cache/
 
 /results/
 /plots/
-
-data/clean/
-data/coronavirus/
+/data/
 
 .DS_Store
 
