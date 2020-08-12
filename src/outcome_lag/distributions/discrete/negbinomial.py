@@ -5,10 +5,10 @@ from scipy.stats._distn_infrastructure import rv_frozen
 
 from skopt.space import Real, Integer
 
-from src.outcome_lag.distributions.discrete.main import DiscreteOutcomeDistribution
+from src.outcome_lag.distributions.discrete.main import DiscreteOutcomeLagDistribution
 
 
-class NegBinomialOutcomeDistribution(DiscreteOutcomeDistribution):
+class NegBinomialOutcomeDistribution(DiscreteOutcomeLagDistribution):
     name = "NegBinomial"
     Parameters = namedtuple(name, ["n", "p"])
 

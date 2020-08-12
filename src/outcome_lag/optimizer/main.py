@@ -23,7 +23,7 @@ def add_initial_points(x0: Optional[List[Collection[float]]], y0: Optional[List[
     return x0 + initial_parameter_points, y0 + initial_loss_points
 
 
-class OutcomeOptimizer:
+class OutcomeLagOptimizer:
     def __init__(self, model, skopt_minimize: optimizer = gbrt_minimize,
                  tag: str = "", verbose: bool = True, random_state: int = 1, **kwargs):
         self.dimensions = model.dimensions

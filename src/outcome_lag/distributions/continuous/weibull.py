@@ -5,10 +5,10 @@ from scipy.stats._distn_infrastructure import rv_frozen
 
 from skopt.space import Real
 
-from src.outcome_lag.distributions.continuous import ContinuousOutcomeDistribution
+from src.outcome_lag.distributions.continuous import ContinuousOutcomeLagDistribution
 
 
-class WeibullOutcomeDistribution(ContinuousOutcomeDistribution):
+class WeibullOutcomeDistribution(ContinuousOutcomeLagDistribution):
     name = "Weibull"
     Parameters = namedtuple(name, ["beta", "eta"])
 

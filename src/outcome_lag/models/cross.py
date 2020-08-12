@@ -1,12 +1,11 @@
 import numpy as np
 from functools import lru_cache
-from typing import Type
 
 from outcome_lag.models.base import BaseOutcomeModel
 
 
-class FatalityOutcomeModel(BaseOutcomeModel):
-    name: str = "fatality"
+class CrossOutcomeModel(BaseOutcomeModel):
+    name: str = "cross"
 
     @lru_cache(maxsize=8)
     def target(self, t: int, start: int = 0) -> np.array:

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from abc import ABC, abstractmethod
 
 from scipy.stats._distn_infrastructure import rv_frozen
-from typing import Optional, NamedTuple, Iterable, Union, Collection, List
+from typing import Optional, NamedTuple, Iterable, Union, List
 
 from skopt.space import Dimension
 
@@ -14,7 +14,12 @@ from outcome_lag.distributions.utils import MAX_RATE_PPF, MAX_RATE_SUPPORT_SIZE,
     describe
 
 
-class BaseOutcomeDistribution(ABC):
+def build_support(max_rate_support_size: int = MAX_RATE_SUPPORT_SIZE,
+                  freq: Union[float, int] = 1) -> np.ndarray:
+    return np.arange(max_rate_support_size, step=freq)
+
+
+class BaseOutcomeLagDistribution(ABC):
     Parameters: Optional[NamedTuple] = None
     name: str = "base"
 
@@ -49,9 +54,6 @@ class BaseOutcomeDistribution(ABC):
 
     @property
     def parameters(self) -> NamedTuple:
-        if self._parameters is None:
-            return None
-
         return self._parameters
 
     @parameters.setter
@@ -64,7 +66,7 @@ class BaseOutcomeDistribution(ABC):
         self.random_variable = self.build_random_variable(self._parameters)
         verify_random_variable(self.random_variable)
 
-        self.support = self.build_support(max_rate_support_size=self.max_rate_support_size)
+        self.support = build_support(max_rate_support_size=self.max_rate_support_size)
 
         # build & verify outcome_lag rate
         self.incidence_rate = self.build_incidence_rate(self.support, self.random_variable, offset=self.rate_support_offset)
@@ -82,10 +84,6 @@ class BaseOutcomeDistribution(ABC):
     def build_random_variable(self, parameters: NamedTuple) -> rv_frozen:
         raise NotImplementedError
 
-    def build_support(self, max_rate_support_size: int = MAX_RATE_SUPPORT_SIZE,
-                      freq: Union[float, int] = 1) -> np.ndarray:
-        return np.arange(max_rate_support_size, step=freq)
-
     @abstractmethod
     def build_incidence_rate(self, support: np.ndarray, random_variable: rv_frozen, **kwargs) -> pd.Series:
         raise NotImplementedError
@@ -95,7 +93,7 @@ class BaseOutcomeDistribution(ABC):
         raise NotImplementedError
 
     def plot_incidence(self, freq: float = 0.001, **kwargs):
-        support = self.build_support(freq=freq, max_rate_support_size=self.max_rate_support_size)
+        support = build_support(freq=freq, max_rate_support_size=self.max_rate_support_size)
         incidence_rate = self.build_incidence_rate(support, self.random_variable)
 
         self._plot_rate(self.incidence_rate, support, incidence_rate, **kwargs)
@@ -103,7 +101,7 @@ class BaseOutcomeDistribution(ABC):
         plt.show()
 
     def plot_hazard(self, freq: float = 0.001, **kwargs):
-        support = self.build_support(freq=freq, max_rate_support_size=self.max_rate_support_size)
+        support = build_support(freq=freq, max_rate_support_size=self.max_rate_support_size)
         incidence_rate = self.build_incidence_rate(support, self.random_variable)
         hazard_rate = self.build_hazard_rate(support, self.random_variable, incidence_rate)
 

@@ -13,8 +13,6 @@ class RecoveryOutcomeModel(BaseOutcomeModel):
         return self.outbreak.recoveries.iloc[start:(t + 1)]
 
     def predict(self, t: int, start: int = 0) -> np.array:
-        self._verify_alpha(self.alpha, t, start)
-
         result = np.zeros((t + 1) - start)
 
         for k in range(t + 1):
@@ -22,5 +20,3 @@ class RecoveryOutcomeModel(BaseOutcomeModel):
 
         return (1 - self.alpha) * result
 
-    def _verify_alpha(self, alpha: float, t: int, start: int = 0) -> None:
-        return True
