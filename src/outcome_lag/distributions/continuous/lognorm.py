@@ -5,7 +5,7 @@ from scipy.stats._distn_infrastructure import rv_frozen
 
 from skopt.space import Real, Integer
 
-from src.outcome_lag.distributions.continuous import ContinuousOutcomeLagDistribution
+from src.outcome_lag.distributions.continuous.main import ContinuousOutcomeLagDistribution
 
 
 class LognormOutcomeDistribution(ContinuousOutcomeLagDistribution):

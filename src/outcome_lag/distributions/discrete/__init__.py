@@ -1,1 +1,1 @@
-from .negbinomial import NegBinomialOutcomeDistribution
+from .main import DiscreteOutcomeLagDistribution

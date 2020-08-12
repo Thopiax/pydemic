@@ -13,7 +13,7 @@ class DiscreteOutcomeLagDistribution(BaseOutcomeLagDistribution, ABC):
         return pd.Series(
             random_variable.pmf(support),
             index=support,
-            name="outcome_lag"
+            name="incidence"
         )
 
     def build_hazard_rate(self, support: np.ndarray, random_variable: rv_frozen, incidence_rate: pd.Series,
