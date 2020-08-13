@@ -2,11 +2,11 @@ import os
 from typing import Union
 from pathlib import PosixPath
 
-from outcome_lag.optimizer.utils import load_result, save_result
+from optimization.utils import load_result, save_result
 from utils.path import CACHE_ROOTPATH
 
 
-class OutcomeOptimizerCache:
+class Cache:
     def __init__(self, path: Union[str, PosixPath]):
         self._path = CACHE_ROOTPATH / path
 

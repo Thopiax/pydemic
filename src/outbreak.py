@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from scipy.signal import find_peaks
 
-from utils.path import DATA_ROOTPATH
+from src.utils.path import DATA_ROOTPATH
 
 
 def _ffx_index(cumulative_x, threshold):

@@ -10,4 +10,5 @@ class OutcomeLagAdjustedCFREstimate(BaseCFREstimate):
     def estimate(self, t: int, start: int = 0) -> float:
         self._verify_inputs(t, start)
 
+        return -1.0
 

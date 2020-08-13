@@ -1,23 +1,61 @@
+from abc import ABC, abstractmethod
+from functools import cached_property, lru_cache
+from pathlib import PosixPath, Path
+from typing import List, Type, Optional
+
 import numpy as np
-from functools import lru_cache
-from typing import Type
 
-from outcome_lag.models.base import BaseOutcomeModel
+from cfr.estimates.base import BaseCFREstimate
+from cfr.estimates.naive import NaiveCFREstimate
+
+from outbreak import Outbreak
+from outcome_lag.distributions.base import BaseOutcomeLagDistribution
+
+from optimization.loss import MeanAbsoluteScaledErrorLoss, BaseLoss
+from outcome_lag.models.base import BaseOutcomeLagModel
+from outcome_lag.models.utils import expected_case_outcome_lag
 
 
-class FatalityOutcomeModel(BaseOutcomeModel):
-    name: str = "fatality"
+class FatalityOutcomeLagModel(BaseOutcomeLagModel):
+    name: str = "FOL"
 
-    @lru_cache(maxsize=8)
-    def target(self, t: int, start: int = 0) -> np.array:
-        # return fatality incidence from start up to t inclusive
-        return self.outbreak.deaths.iloc[start:(t + 1)].values
+    def __init__(self, outbreak: Outbreak, distribution: BaseOutcomeLagDistribution,
+                 Loss: Type[BaseLoss] = MeanAbsoluteScaledErrorLoss,
+                 CFR_estimate: Type[BaseCFREstimate] = NaiveCFREstimate):
+        super().__init__(outbreak, Loss)
 
-    def predict(self, t: int, start: int = 0) -> np.array:
+        self.distribution = distribution
+        self._base_cfr_estimate = CFR_estimate(self.outbreak)
+
+        self._cases = self.outbreak.cases.to_numpy()
+        self._target = self.outbreak.deaths.to_numpy()
+
+    @property
+    def dimensions(self):
+        return self.distribution.dimensions
+
+    @property
+    def parameters(self) -> List[float]:
+        return list(self.distribution.parameters)
+
+    @parameters.setter
+    def parameters(self, parameters: List[float]):
+        self.distribution.parameters = parameters
+
+    @cached_property
+    def cache_path(self) -> PosixPath:
+        return super().cache_path / self.distribution.name
+
+    def target(self, t: int, start: int = 0) -> np.ndarray:
+        return self._target[start:(t + 1)]
+
+    def sample_weight(self, t: int, start: int = 0) -> Optional[np.ndarray]:
+        return None
+
+    def predict(self, t: int, start: int = 0) -> np.ndarray:
         result = np.zeros(t + 1 - start)
 
-        for k in range(t + 1):
-            result[k] = self._predict_incidence(k + start)
+        for k in range(start, t + 1):
+            result[k - start] = expected_case_outcome_lag(k, self._cases, self.distribution.incidence_rate)
 
-        return self.alpha * result
-
+        return self._base_cfr_estimate.estimate(t + 1, start=start) * result
