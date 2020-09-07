@@ -1,3 +1,5 @@
+import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
 from scipy.integrate import solve_ivp
 
@@ -15,8 +17,8 @@ class SEIRDModel:
 
         self.R_0 = self.beta / self.gamma
 
-    def _ode(self, t, y):
-        S, E, I, R, D = y
+    def _ode(self, t, X):
+        S, E, I, R, D = X
 
         dS = -self.beta * S * I / self.N
         dE = self.beta * S * I / self.N - self.delta * E
@@ -26,30 +28,55 @@ class SEIRDModel:
 
         return dS, dE, dI, dR, dD
 
-    def solve(self, T: int, E_0: int = 0, I_0: int = 1, R_0: int = 0, D_0: int = 0):
+    def simulate(self, T: int, dt: float = 0.01, E_0: float = 10.0, I_0: float = 0.0, R_0: float = 0.0, D_0: float = 0.0):
         S_0 = self.N - I_0 - E_0 - R_0 - D_0
 
-        return solve_ivp(self._ode, (0, T), [S_0, E_0, I_0, R_0, D_0], t_eval=range(0, T))
+        solution = solve_ivp(self._ode, (0, T), [S_0, E_0, I_0, R_0, D_0], t_eval=np.arange(0, T, dt))
 
-    def plot(self, T: int):
-        solution = self.solve(T)
+        # build a history dataframe from the solution
+        history = pd.DataFrame(data=solution.y.T, index=solution.t, columns=["S", "E", "I", "R", "D"])
 
-        S, E, I, R, D = solution.y
+        return history
 
-        plt.plot(solution.t, S + E + I + R + D, label="N")
-        plt.plot(solution.t, S, label="S")
-        plt.plot(solution.t, E, label="E")
-        plt.plot(solution.t, I, label="I")
-        plt.plot(solution.t, R, label="R")
-        plt.plot(solution.t, D, label="D")
-
-        plt.legend()
-
+    def plot(self, history: pd.DataFrame):
+        ax = plt.gca()
+        history.plot(ax=ax)
         plt.show()
 
-    def generate_outbreak(self, T: int):
-        solution = self.solve(T)
 
-        S, E, I, R, D = solution.y
+if __name__ == "__main__":
+    from sklearn.metrics import mean_absolute_error
 
-        return Outbreak(f"SEIRD_{self.N}", cases=I, deaths=D, recoveries=R)
+    from src.data.synthetic.sei4rd import SEI4RD, DeterministicSEI4RDSimulator, StochasticSEI4RDSimulator
+    from src.data.synthetic.sei4rd.parameters import SEParameters, OutcomeParameters
+
+    alpha = 0.2
+    beta = 1.5
+
+    delta = 0.2
+
+    gamma = 0.7
+    rho = 0.3
+
+    T = 100
+
+    complex_model = SEI4RD(1_000_000, alpha,
+                           infection_parameters=SEParameters(beta_E=0, c_I=1.0, beta_I=beta, D_E=1 / delta),
+                           recovery_parameters=OutcomeParameters(lambdaS=gamma, K=1),
+                           death_parameters=OutcomeParameters(lambdaS=rho, K=1))
+
+    complex_simulator = DeterministicSEI4RDSimulator(complex_model)
+    complex_history = complex_simulator.simulate(T)
+
+    complex_simulator.plot(complex_history)
+
+    # apples to apples
+    complex_history = complex_simulator.convert_to_SEIRD(complex_history)
+
+    basic_model = SEIRDModel(1_000_000, alpha, beta, gamma, delta, rho)
+    basic_history = basic_model.simulate(T)
+
+    basic_model.plot(basic_history)
+
+    print(f"MAE={mean_absolute_error(basic_history.values, complex_history.values)}")
+

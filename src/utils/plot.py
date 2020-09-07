@@ -5,7 +5,6 @@ from typing import Union
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-
 from src.utils.path import PLOTS_ROOTPATH
 from src.config import setup_matplotlib
 
@@ -55,3 +54,4 @@ def plot_outbreak(outbreak):
     outbreak.recoveries.plot(ax=ax, label="recoveries")
 
     plt.show()
+
