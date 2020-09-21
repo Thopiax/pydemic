@@ -1,9 +1,7 @@
 from collections import namedtuple
 
 
-# TODO: make Infectious Chains more generic
-# InfectiousChainParameters = namedtuple("InfectiousChainParameters", ["p", "c", "beta", "K", "lam"],
-#                                        defaults=[1.0, 1.0, 1, 0.2])
+InfectiousChainParameters = namedtuple("InfectiousChainParameters", ["K", "rate"], defaults=[1, 1 / 5.0])
 
 OutcomeParameters = namedtuple("OutcomeParameters", ["gamma", "K", "lambdaS", "lambdaA"],
                                defaults=[1.0, 1, 1 / 5.0, 1 / 5.0])

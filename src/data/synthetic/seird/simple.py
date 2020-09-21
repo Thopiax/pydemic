@@ -3,10 +3,8 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from scipy.integrate import solve_ivp
 
-from outbreak import Outbreak
 
-
-class SEIRDModel:
+class SimpleSEIRD:
     def __init__(self, N: int, alpha: float, beta: float, gamma: float, delta: float, rho: float):
         self.N = N
         self.alpha = alpha
@@ -44,39 +42,39 @@ class SEIRDModel:
         plt.show()
 
 
-if __name__ == "__main__":
-    from sklearn.metrics import mean_absolute_error
-
-    from src.data.synthetic.sei4rd import SEI4RD, DeterministicSEI4RDSimulator, StochasticSEI4RDSimulator
-    from src.data.synthetic.sei4rd.parameters import SEParameters, OutcomeParameters
-
-    alpha = 0.2
-    beta = 1.5
-
-    delta = 0.2
-
-    gamma = 0.7
-    rho = 0.3
-
-    T = 100
-
-    complex_model = SEI4RD(1_000_000, alpha,
-                           infection_parameters=SEParameters(beta_E=0, c_I=1.0, beta_I=beta, D_E=1 / delta),
-                           recovery_parameters=OutcomeParameters(lambdaS=gamma, K=1),
-                           death_parameters=OutcomeParameters(lambdaS=rho, K=1))
-
-    complex_simulator = DeterministicSEI4RDSimulator(complex_model)
-    complex_history = complex_simulator.simulate(T)
-
-    complex_simulator.plot(complex_history)
-
-    # apples to apples
-    complex_history = complex_simulator.convert_to_SEIRD(complex_history)
-
-    basic_model = SEIRDModel(1_000_000, alpha, beta, gamma, delta, rho)
-    basic_history = basic_model.simulate(T)
-
-    basic_model.plot(basic_history)
-
-    print(f"MAE={mean_absolute_error(basic_history.values, complex_history.values)}")
-
+# if __name__ == "__main__":
+    # from sklearn.metrics import mean_absolute_error
+    #
+    # from src.data.synthetic.seird import SEI4RD, DeterministicSimulator
+    # from data.synthetic.parameters import SEParameters, OutcomeParameters
+    #
+    # alpha = 0.2
+    # beta = 1.5
+    #
+    # delta = 0.2
+    #
+    # gamma = 0.7
+    # rho = 0.3
+    #
+    # T = 100
+    #
+    # complex_model = SEI4RD(1_000_000, alpha,
+    #                        infection_parameters=SEParameters(beta_E=0, c_I=1.0, beta_I=beta, D_E=1 / delta),
+    #                        recovery_parameters=OutcomeParameters(lambdaS=gamma, K=1),
+    #                        death_parameters=OutcomeParameters(lambdaS=rho, K=1))
+    #
+    # complex_simulator = DeterministicSimulator(complex_model)
+    # complex_history = complex_simulator.simulate(T)
+    #
+    # complex_simulator.plot(complex_history)
+    #
+    # # apples to apples
+    # complex_history = complex_simulator.aggregate_infection_compartments(complex_history)
+    #
+    # basic_model = SimpleSEIRD(1_000_000, alpha, beta, gamma, delta, rho)
+    # basic_history = basic_model.simulate(T)
+    #
+    # basic_model.plot(basic_history)
+    #
+    # print(f"MAE={mean_absolute_error(basic_history.values, complex_history.values)}")
+    #

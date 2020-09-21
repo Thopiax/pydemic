@@ -1,12 +1,16 @@
 import networkx as nx
+import numpy as np
+
 from typing import Optional, Dict, List, Tuple
 
 from functools import partial
 
-import numpy as np
+from ..parameters import OutcomeParameters, InfectionParameters
+from ....enums import Outcome
 
-from data.synthetic.sei4rd.parameters import OutcomeParameters, InfectionParameters
-from outcome import Outcome
+
+def get_compartment(g: nx.DiGraph, key: str):
+    return g.nodes[key]["val"]
 
 
 class SEI4RD:
@@ -75,7 +79,7 @@ class SEI4RD:
         self._build_graph_nodes(self._graph, **kwargs)
         self._build_graph_edges(self._graph)
 
-    def _build_graph_nodes(self, g: nx.DiGraph, E_0: float = 10.0):
+    def _build_graph_nodes(self, g: nx.DiGraph, E_0: float = 100.0):
         g.add_nodes_from([
             ("S", dict(val=self.N - E_0)),
             ("E", dict(val=E_0)),

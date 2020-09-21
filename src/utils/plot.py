@@ -54,4 +54,3 @@ def plot_outbreak(outbreak):
     outbreak.recoveries.plot(ax=ax, label="recoveries")
 
     plt.show()
-
