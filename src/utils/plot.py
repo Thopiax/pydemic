@@ -53,4 +53,6 @@ def plot_outbreak(outbreak):
     outbreak.deaths.plot(ax=ax, label="deaths")
     outbreak.recoveries.plot(ax=ax, label="recoveries")
 
+    plt.legend()
+
     plt.show()

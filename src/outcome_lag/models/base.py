@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 from functools import cached_property, lru_cache
 from pathlib import PosixPath, Path
-from typing import List, Type, Optional
+from typing import List, Type, Optional, Union, Tuple
 
 import numpy as np
 
 from cfr.estimates.base import BaseCFREstimate
 from cfr.estimates.naive import NaiveCFREstimate
-from optimization.utils import get_optimal_parameters
+from optimization.utils import get_optimal_parameters, get_n_best_parameters
 from outbreak import Outbreak
 from outcome_lag.distributions.base import BaseOutcomeLagDistribution
 
@@ -23,18 +23,25 @@ class BaseOutcomeLagModel(ABC):
         self.outbreak = outbreak
         self._Loss = Loss
 
+        self.results = {}
+
     @cached_property
     def cache_path(self) -> PosixPath:
         return Path(self.outbreak.region) / self.__class__.name
 
-    def fit(self, t: int, start: int = 0, **kwargs) -> List[float]:
+    def fit(self, t: int, start: int = 0, n_best_parameters=1, **kwargs) -> Union[List[float], List[Tuple[float, List[float]]]]:
         loss = self._Loss(self, t, start=start)
         optimizer = Optimizer(self.dimensions, cache_path=self.cache_path)
 
         optimization_result = optimizer.optimize(loss, **kwargs)
 
-        # return optimal parameters
-        return get_optimal_parameters(optimization_result)
+        self.results[(t, start)] = optimization_result
+
+        if n_best_parameters == 1:
+            # return optimal parameters
+            return get_optimal_parameters(optimization_result)
+
+        return get_n_best_parameters(n_best_parameters, optimization_result)
 
     # ABSTRACT #
 

@@ -15,10 +15,7 @@ class Simulator(ABC):
 
         self._previous_simulations = []
 
-    def aggregate_infection_compartments(self, simulation: Optional[pd.DataFrame] = None):
-        if simulation is None:
-            simulation = self._previous_simulations[-1]
-
+    def aggregate_infection_compartments(self, simulation: pd.DataFrame):
         df = simulation.copy()
 
         df["I"] = simulation[self.model.infected_compartments].sum(axis=1)
@@ -30,6 +27,9 @@ class Simulator(ABC):
         return df
 
     def plot(self, simulation: Optional[pd.DataFrame] = None):
+        if simulation is None:
+            simulation = self._previous_simulations[-1]
+
         ax = plt.gca()
 
         simulation.plot(ax=ax)

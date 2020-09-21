@@ -144,6 +144,17 @@ class Outbreak:
         return _ffx_index(cumulative_x, xs[0])
 
     @staticmethod
+    def from_simulation(region, simulation, dt: float = 1.0):
+        observation_index = np.arange(0, max(simulation.index), dt)
+
+        return Outbreak(
+            region,
+            cases=simulation.loc[observation_index, "I"].diff().where(lambda s: s > 0).fillna(0).astype(int),
+            deaths=simulation.loc[observation_index, "D"].diff().where(lambda s: s > 0).fillna(0).astype(int),
+            recoveries=simulation.loc[observation_index, "R"].diff().where(lambda s: s > 0).fillna(0).astype(int),
+        )
+
+    @staticmethod
     def from_csv(region, epidemic="covid"):
         filepath = DATA_ROOTPATH / f"{epidemic}/{region}.csv"
 

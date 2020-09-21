@@ -1,8 +1,5 @@
 import numpy as np
 
-from outcome_lag.distributions.base import BaseOutcomeLagDistribution
-
-
 def expected_case_outcome_lag(t: int, cases: np.array, incidence_rate: np.array):
     K = min(t + 1, len(incidence_rate))
 

@@ -42,9 +42,9 @@ class Optimizer:
     def cache_result(self, loss, result):
         return self.cache.add(f"{self.tag}_{loss.tag}", result, to_disk=True)
 
-    def optimize(self, loss: BaseLoss, n_calls: int = 300, max_calls: int = 300, n_random_starts: int = 50,
+    def optimize(self, loss: BaseLoss, n_calls: int = 200, max_calls: int = 300, n_random_starts: int = 50,
                  use_cache=True, initial_parameter_points: Optional[np.array] = None, delta: float = 0.0,
-                 random_state: int = 1, **kwargs):
+                 random_state: int = 1, verbose=True, **kwargs):
         result = self.load_cached_result(loss)
 
         x0, y0 = get_initial_points(result)
@@ -61,7 +61,7 @@ class Optimizer:
 
         result = self.skopt_minimize(loss, dimensions=self.dimensions, acq_func="LCB", n_calls=n_calls,
                                      n_random_starts=n_random_starts, callback=[DeltaYStopper(delta)],
-                                     x0=x0, y0=y0, n_jobs=-1, random_state=random_state, **kwargs)
+                                     x0=x0, y0=y0, n_jobs=-1, random_state=random_state, verbose=verbose, **kwargs)
 
         if use_cache:
             self.cache_result(loss, result)

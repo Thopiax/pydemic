@@ -66,7 +66,7 @@ class Epidemic:
 
         result = pd.Series(index=regions)
 
-        for region, outbreak in self[regions].items():
+        for region, outbreak in self[regions]:
             result[region] = func(outbreak, *params, **kwargs)
 
         return result

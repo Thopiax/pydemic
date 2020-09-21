@@ -2,7 +2,7 @@ import os
 from pathlib import PosixPath
 from typing import Optional, List, Tuple, Union
 
-import numpy as np
+from heapq import nsmallest
 from scipy.optimize import OptimizeResult
 
 from skopt import dump, load, expected_minimum
@@ -35,6 +35,13 @@ def get_optimal_parameters(result: Union[OptimizeResult, None]) -> List:
 
 def get_optimal_loss(result: Union[OptimizeResult, None]) -> float:
     return result.fun if result is not None else -1.0
+
+
+def get_n_best_parameters(n, result: Union[OptimizeResult, None]) -> List[Tuple[float, List[float]]]:
+    if result is None:
+        return []
+
+    return nsmallest(n, zip(result.func_vals, result.x_iters))
 
 
 def get_initial_points(result: Union[OptimizeResult, None]) -> Union[Tuple[List, List], Tuple[None, None]]:
