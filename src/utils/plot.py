@@ -41,18 +41,4 @@ def save_figure(dest: Union[str, callable], overwrite: bool = True):
     return decorator_save_figure
 
 
-@save_figure(lambda outbreak: f"outbreaks/{outbreak.region}.pdf")
-def plot_outbreak(outbreak):
-    ax = plt.gca()
 
-    plt.suptitle(outbreak.region)
-
-    ax.set_ylabel("# of people")
-
-    outbreak.cases.plot(ax=ax, label="cases")
-    outbreak.deaths.plot(ax=ax, label="deaths")
-    outbreak.recoveries.plot(ax=ax, label="recoveries")
-
-    plt.legend()
-
-    plt.show()

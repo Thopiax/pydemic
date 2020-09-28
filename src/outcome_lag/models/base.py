@@ -36,9 +36,9 @@ class BaseOutcomeLagModel(ABC):
         optimization_result = optimizer.optimize(loss, **kwargs)
 
         self.results[(t, start)] = optimization_result
+        self.parameters = get_optimal_parameters(optimization_result)
 
         if n_best_parameters == 1:
-            # return optimal parameters
             return get_optimal_parameters(optimization_result)
 
         return get_n_best_parameters(n_best_parameters, optimization_result)

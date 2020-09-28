@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 
 from abc import ABC, abstractmethod
 
@@ -10,7 +9,7 @@ from typing import Optional, NamedTuple, Iterable, Union, List
 from skopt.space import Dimension
 
 from src.outcome_lag.distributions.exceptions import InvalidParameterError
-from outcome_lag.distributions.utils import MAX_RATE_PPF, MAX_SUPPORT_SIZE, verify_random_variable, verify_rate, \
+from src.outcome_lag.distributions.utils import MAX_RATE_PPF, MAX_SUPPORT_SIZE, verify_random_variable, verify_rate, \
     describe
 
 
@@ -97,8 +96,6 @@ class BaseOutcomeLagDistribution(ABC):
 
         self._plot_rate(self.incidence_rate, support, incidence_rate, **kwargs)
 
-        plt.show()
-
     def plot_hazard(self, freq: float = 0.001, **kwargs):
         support = build_support(freq=freq, max_support_size=self.max_support_size)
         incidence_rate = self.build_incidence_rate(support, self.random_variable)
@@ -106,21 +103,10 @@ class BaseOutcomeLagDistribution(ABC):
 
         self._plot_rate(self.hazard_rate, support, hazard_rate, label="Hazard", color="orange", **kwargs)
 
-        plt.show()
-
-    def _plot_rate(self, rate, hf_support, hf_rate, color: str = "blue", label: str = "Incidence", **kwargs):
-        plt.gca()
-
-        # plot high-frequency rates
-        plt.plot(hf_support, hf_rate, label=label, c=color, alpha=0.5)
-
-        # plot probability dots
-        plt.hlines(rate, self.support, self.support + self.support_offset, linestyles='--',
-                   colors='red')
-
-        plt.bar(self.support, rate, width=0.3, alpha=0.6, color=color)
-
-        plt.legend()
+    @abstractmethod
+    def _plot_rate(self, rate, hf_support, hf_rate, color: str = "blue", label: str = "Incidence",
+                   support_offset: Optional[float] = None, **kwargs):
+        raise NotImplementedError
 
     @property
     def dimensions(self) -> List[Dimension]:

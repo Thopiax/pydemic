@@ -4,7 +4,7 @@ from typing import Union, Collection
 import networkx as nx
 import numpy as np
 
-from .graph import SEIRDGraph
+from .model import SEIRDModel
 from .utils import get_compartment
 from src.enums import Outcome
 
@@ -29,11 +29,6 @@ class InfectiousStream:
         self.K_R = K_R
         self.rate_R = rate_R
 
-        self.rates = {
-            "in": (self.alpha * self.p, (1 - self.alpha) * self.p),
-            "out": (self.rate_D, self.rate_R)
-        }
-
     def update_parameters(self, **params):
         for key, value in params.items():
             if getattr(self, key, None) is None:
@@ -41,12 +36,11 @@ class InfectiousStream:
             else:
                 setattr(self, key, value)
 
-        if hasattr(self, "_chain_parameters"):
-            del self._chain_parameters
-        if hasattr(self, "compartments"):
-            del self.compartments
+    @property
+    def parameters(self):
+        return dict(p=self.p, alpha=self.alpha, c=self.c, beta=self.beta, chain_parameters=self.chain_parameters)
 
-    @cached_property
+    @property
     def chain_parameters(self):
         return {
             Outcome.DEATH: {
@@ -60,7 +54,7 @@ class InfectiousStream:
             }
         }
 
-    @cached_property
+    @property
     def compartments(self):
         return self.outcome_compartments(Outcome.DEATH) + self.outcome_compartments(Outcome.RECOVERY)
 
@@ -71,37 +65,56 @@ class InfectiousStream:
         return [self._compartment_label(outcome, k + 1) for k in range(self.chain_parameters[outcome]["K"])]
 
 
-class SEIRDGraphBuilder:
-    def __init__(self, alpha: float, D_E: float, stream_probabilities: Union[float, Collection[float]]):
-        # if only one number is passed,
-        if type(stream_probabilities) is not list:
-            # we assume that the system has binary infection streams
-            stream_probabilities = [stream_probabilities, 1 - stream_probabilities]
-
-        stream_probabilities = np.array(stream_probabilities)
-
-        assert sum(abs(stream_probabilities)) == 1
+class SEIRDBuilder:
+    def __init__(self, alpha: float, D_E: float = 0.2, N: int = 1_000_000):
+        # # if only one number is passed,
+        # if type(stream_probabilities) is not list:
+        #     # we assume that the system has binary infection streams
+        #     stream_probabilities = [stream_probabilities, 1 - stream_probabilities]
+        #
+        # stream_probabilities = np.array(stream_probabilities)
+        #
+        # assert sum(abs(stream_probabilities)) == 1
 
         self.D_E = D_E
         self._alpha = alpha
+        self.N = N
 
-        self._stream_probabilities = stream_probabilities
-        self._streams = [self._build_default_stream(i, p) for (i, p) in enumerate(stream_probabilities)]
+        self._stream_probabilities = 0
+        self._streams = []
 
-    def _build_default_stream(self, index: int, probability: float):
-        return InfectiousStream(index, probability, self._alpha)
+    def with_stream(self, probability: float = 1.0, **kwargs):
+        assert probability + self._stream_probabilities <= 1
 
-    def update_stream_parameters(self, index: int, **kwargs):
-        assert 0 <= index < len(self._streams)
+        index = len(self._streams)
+        alpha = kwargs.get("alpha", self._alpha)
 
-        self._streams[index].update_parameters(**kwargs)
+        stream = InfectiousStream(index, probability, alpha, **kwargs)
 
-    def build(self, N: int, **kwargs):
+        self._streams.append(stream)
+        self._stream_probabilities += probability
+
+        return self
+
+    def build(self, **kwargs):
+        assert self._stream_probabilities == 1
+
         graph = nx.DiGraph()
 
-        self._build_graph_edges(graph, N)
+        self._build_graph_edges(graph)
 
-        return SEIRDGraph(graph, N, **kwargs)
+        return SEIRDModel(graph, parameters=self.parameters, **kwargs)
+
+    @cached_property
+    def parameters(self):
+        stream_parameters = {f"stream_{s.index}": s.parameters for s in self._streams}
+
+        return dict(
+            N=self.N,
+            alpha=self._alpha,
+            D_E=self.D_E,
+            **stream_parameters
+        )
 
     def _exposure_rate(self, N: int, graph: nx.DiGraph):
         result = 0
@@ -120,8 +133,8 @@ class SEIRDGraphBuilder:
     def _outcome_rate(stream: InfectiousStream, outcome: Outcome, _graph: nx.DiGraph):
         return stream.chain_parameters[outcome]["rate"]
 
-    def _build_graph_edges(self, g: nx.DiGraph, N: int):
-        g.add_edge("S", "E", rate_func=partial(self._exposure_rate, N))
+    def _build_graph_edges(self, g: nx.DiGraph):
+        g.add_edge("S", "E", rate_func=partial(self._exposure_rate, self.N))
 
         for stream in self._streams:
             for outcome in Outcome:

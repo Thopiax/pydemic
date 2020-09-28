@@ -4,9 +4,11 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 
 from src.utils.path import DATA_ROOTPATH
+from utils.plot import save_figure
 
 
 def _ffx_index(cumulative_x, threshold):
@@ -40,8 +42,7 @@ class Outbreak:
 
         # construct the cumulative columns if they are not present in the df
         for field in Outbreak.required_fields:
-            if f"cumulative_{field}" not in self._df.columns:
-                self._df[f"cumulative_{field}"] = self._df[field].cumsum()
+            self._df[f"cumulative_{field}"] = self._df[field].cumsum()
 
         # must be set after df is created
         self.smoothing_window = smoothing_window
@@ -143,15 +144,39 @@ class Outbreak:
 
         return _ffx_index(cumulative_x, xs[0])
 
+    @save_figure(lambda outbreak: f"outbreaks/{outbreak.region}.pdf")
+    def plot(self):
+        ax = plt.gca()
+
+        plt.suptitle(self.region)
+
+        ax.set_ylabel("# of people")
+
+        self.cases.plot(ax=ax, label="cases")
+        self.deaths.plot(ax=ax, label="deaths")
+        self.recoveries.plot(ax=ax, label="recoveries")
+
+        plt.legend()
+
+        plt.show()
+
     @staticmethod
     def from_simulation(region, simulation, dt: float = 1.0):
         observation_index = np.arange(0, max(simulation.index), dt)
 
+        def observe(col):
+            return simulation.loc[observation_index, col].diff().where(lambda s: s > 0).fillna(0).astype(int)
+
+        deaths = observe("D")
+        recoveries = observe("R")
+
+        cases = observe("I") + deaths + recoveries
+
         return Outbreak(
             region,
-            cases=simulation.loc[observation_index, "I"].diff().where(lambda s: s > 0).fillna(0).astype(int),
-            deaths=simulation.loc[observation_index, "D"].diff().where(lambda s: s > 0).fillna(0).astype(int),
-            recoveries=simulation.loc[observation_index, "R"].diff().where(lambda s: s > 0).fillna(0).astype(int),
+            cases=cases,
+            deaths=deaths,
+            recoveries=recoveries
         )
 
     @staticmethod

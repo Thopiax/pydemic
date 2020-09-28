@@ -60,8 +60,14 @@ class MeanAbsoluteScaledErrorLoss(BaseLoss):
     def __init__(self, model, t: int, **kwargs):
         super().__init__(model, t, **kwargs)
 
-        self._scaling_coefficient = self.y_true.sum()
+        self._scaling_coefficient = self.y_true.sum(axis=0)
 
     def _loss(self):
-        return mean_absolute_error(self.y_true, self.y_pred, sample_weight=self.sample_weight) \
-               / self._scaling_coefficient
+        loss = mean_absolute_error(
+            self.y_true,
+            self.y_pred,
+            sample_weight=self.sample_weight,
+            multioutput=(1.0 / self._scaling_coefficient)
+        )
+
+        return loss

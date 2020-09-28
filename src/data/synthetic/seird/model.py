@@ -1,5 +1,5 @@
 from functools import cached_property
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 
 import networkx as nx
 import numpy as np
@@ -7,11 +7,11 @@ import numpy as np
 from data.synthetic.seird.utils import get_compartment
 
 
-class SEIRDGraph:
-    def __init__(self, graph: nx.DiGraph, N: int, **kwargs):
+class SEIRDModel:
+    def __init__(self, graph: nx.DiGraph, parameters: Dict[str, Any], **kwargs):
         self._graph = graph
 
-        self.N = N
+        self._parameters = parameters
         self.set_initial_state(**kwargs)
 
     def __getitem__(self, item):
@@ -22,12 +22,16 @@ class SEIRDGraph:
 
     def set_initial_state(self, E_0: float = 100.0):
         self._graph.add_nodes_from([
-            ("S", dict(val=self.N - E_0)),
+            ("S", dict(val=self._parameters["N"] - E_0)),
             ("E", dict(val=E_0)),
             *self.infected_compartments,
             "R",
             "D",
         ], val=0.0)
+
+    @property
+    def parameters(self):
+        return self._parameters
 
     @cached_property
     def infected_compartments(self):

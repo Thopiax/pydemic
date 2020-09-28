@@ -6,38 +6,48 @@ from matplotlib import pyplot as plt
 from numpy.random.mtrand import binomial, multinomial
 
 from data.synthetic.simulator.base import Simulator
-from data.synthetic.simulator.utils import average_simulations
-from utils.plot import save_figure
 
 
 class StochasticSimulator(Simulator):
-    def __init__(self, model):
-        super().__init__(model)
+    def __init__(self, graph_model):
+        super().__init__(graph_model)
 
         self._multinomial_rates = []
 
-    # @save_figure(lambda simulations: f"synthetic/stochastic_{len(simulations)}sims.pdf")
-    def plot_all(self, simulations: Collection[pd.DataFrame]):
+    @staticmethod
+    def average_simulations(simulations: Collection[pd.DataFrame]):
+        assert len(simulations) > 1
+        result = simulations[0]
+
+        for sim in simulations[1:]:
+            result.add(sim, axis=1)
+
+        result.div(float(len(simulations)))
+
+        return result
+
+    @staticmethod
+    def plot_all(simulations: Collection[pd.DataFrame]):
         ax = plt.gca()
 
-        for sim in simulations:
-            agg_sim = self.aggregate_infection_compartments(sim)
-            agg_sim.plot(ax=ax, color='grey', alpha=0.2, legend=False)
+        simplified_simulations = [StochasticSimulator.aggregate_infection_compartments(sim) for sim in simulations]
 
-        avg_sim = average_simulations(simulations)
-        avg_sim = self.aggregate_infection_compartments(avg_sim)
+        for sim in simplified_simulations:
+            sim.plot(ax=ax, color='grey', alpha=0.2, legend=False)
+
+        avg_sim = StochasticSimulator.average_simulations(simplified_simulations)
         avg_sim.plot(ax=ax, linewidth=5.0)
 
         plt.show()
 
     def _diff(self, dt: float):
-        state_diff = {comp: 0 for comp in self.model.compartments}
+        state_diff = {comp: 0 for comp in self.graph_model.compartments}
 
-        for (src, edges) in self.model.transition_rates.items():
+        for (src, edges) in self.graph_model.transition_rates.items():
             if len(edges) == 1:
                 [(dest, rate)] = edges
 
-                flow = binomial(self.model[src], rate * dt)
+                flow = binomial(self.graph_model[src], rate * dt)
 
                 # remove flow from src component
                 state_diff[src] -= flow
@@ -52,7 +62,7 @@ class StochasticSimulator(Simulator):
                 # for numerical consistency, we should choose dt for the expression below to approximate 1/2
                 self._multinomial_rates.append(sum(rates) * dt)
 
-                flow = multinomial(self.model[src], rates * dt)
+                flow = multinomial(self.graph_model[src], rates * dt)
 
                 state_diff[src] -= sum(flow[:-1])
 
@@ -64,32 +74,38 @@ class StochasticSimulator(Simulator):
     def _run_simulation(self, T: int, dt: float):
         time_index = np.arange(0, T, dt)
 
-        simulation = pd.DataFrame(index=time_index, columns=self.model.compartments)
+        simulation = pd.DataFrame(index=time_index, columns=self.graph_model.compartments)
 
         for t in time_index:
-            simulation.loc[t, :] = self.model.state
+            simulation.loc[t, :] = self.graph_model.state
 
-            self.model.update_state(self._diff(dt))
-
-        self._verify_stability(simulation)
+            self.graph_model.update_state(self._diff(dt))
 
         return simulation
 
-    def simulate(self, T: int, dt: float = 0.05, n_sims: int = 10) -> Union[pd.DataFrame, Collection[pd.DataFrame]]:
+    def simulate(self, T: int, dt: float = 0.05, n_sims: int = 10, average_sims: bool = False, aggregate_I: bool = False) -> Union[
+        pd.DataFrame, Collection[pd.DataFrame]]:
+
         results = []
 
         for i in range(n_sims):
-            self.model.set_initial_state()
+            self.graph_model.set_initial_state()
 
             print(f"Running simulation #{i}...")
             simulation = self._run_simulation(T, dt)
 
-            results.append(simulation)
-
             self._verify_stability(simulation)
             self._previous_simulations.append(simulation)
 
+            if aggregate_I:
+                simulation = StochasticSimulator.aggregate_infection_compartments(simulation)
+
+            results.append(simulation)
+
         if n_sims == 1:
             results = results[0]
+
+        if average_sims:
+            results = StochasticSimulator.average_simulations(results)
 
         return results
