@@ -18,7 +18,7 @@ class ContinuousResolutionDelayDistribution(BaseResolutionDelayDistribution, ABC
 
     @property
     def max_ppf(self):
-        return int(self.__class__._dist.ppf(self.max_rate_ppf, self.shape, scale=self.scale))
+        return int(np.ceil(self.__class__._dist.ppf(self.max_rate_ppf, self.shape, scale=self.scale)))
 
     def build_incidence_rate(self, support: np.ndarray, offset: float = 0.0) -> pd.Series:
         return pd.Series(

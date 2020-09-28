@@ -14,11 +14,11 @@ setup_matplotlib()
 def save_figure(dest: Union[str, callable], overwrite: bool = True):
     def decorator_save_figure(func: callable):
         @functools.wraps(func)
-        def wrapper_func(*args, save_figure: bool = True, **kwargs):
+        def wrapper_func(*args, save: bool = False, **kwargs):
             fig = plt.gcf()
             func(*args, **kwargs)
 
-            if save_figure is False:
+            if save is False:
                 return
 
             path = dest

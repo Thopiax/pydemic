@@ -11,11 +11,6 @@ class ErlangResolutionDelayDistribution(ContinuousResolutionDelayDistribution):
     _dist = erlang
     Parameters = namedtuple(_dist.name, ["k", "theta"])
 
-    def __init__(self, *parameters):
-        super().__init__(*parameters)
-
-        self.support_offset = 0
-
     @property
     def dimensions(self):
         return [Integer(0, 1_000), Real(0.0, 1_000.0)]

@@ -4,7 +4,7 @@ from typing import List, Dict, Tuple, Any
 import networkx as nx
 import numpy as np
 
-from data.synthetic.seird.utils import get_compartment
+from data.synthetic.utils import get_compartment
 
 
 class SEIRDModel:
@@ -12,6 +12,7 @@ class SEIRDModel:
         self._graph = graph
 
         self._parameters = parameters
+
         self.set_initial_state(**kwargs)
 
     def __getitem__(self, item):
@@ -24,7 +25,7 @@ class SEIRDModel:
         self._graph.add_nodes_from([
             ("S", dict(val=self._parameters["N"] - E_0)),
             ("E", dict(val=E_0)),
-            *self.infected_compartments,
+            *self.infectious_compartments,
             "R",
             "D",
         ], val=0.0)
@@ -34,7 +35,11 @@ class SEIRDModel:
         return self._parameters
 
     @cached_property
-    def infected_compartments(self):
+    def n_streams(self):
+        return len(self._parameters["streams"])
+
+    @cached_property
+    def infectious_compartments(self):
         return list(filter(lambda s: s.startswith("I"), self.compartments))
 
     @cached_property

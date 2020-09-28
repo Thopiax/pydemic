@@ -5,10 +5,10 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from numpy.random.mtrand import binomial, multinomial
 
-from data.synthetic.simulator.base import Simulator
+from data.synthetic.simulation.base import Simulation
 
 
-class StochasticSimulator(Simulator):
+class StochasticSimulation(Simulation):
     def __init__(self, graph_model):
         super().__init__(graph_model)
 
@@ -30,12 +30,12 @@ class StochasticSimulator(Simulator):
     def plot_all(simulations: Collection[pd.DataFrame]):
         ax = plt.gca()
 
-        simplified_simulations = [StochasticSimulator.aggregate_infection_compartments(sim) for sim in simulations]
+        simplified_simulations = [StochasticSimulation.aggregate_infection_compartments(sim) for sim in simulations]
 
         for sim in simplified_simulations:
             sim.plot(ax=ax, color='grey', alpha=0.2, legend=False)
 
-        avg_sim = StochasticSimulator.average_simulations(simplified_simulations)
+        avg_sim = StochasticSimulation.average_simulations(simplified_simulations)
         avg_sim.plot(ax=ax, linewidth=5.0)
 
         plt.show()
@@ -57,12 +57,12 @@ class StochasticSimulator(Simulator):
                 assert src == "E"
 
                 # add the last compartment as the "catchall" i.e. the probability that they stay exposed.
-                rates = np.array([rate for (_, rate) in edges] + [0])
+                infectious_rates = np.array([rate for (_, rate) in edges] + [0])
 
                 # for numerical consistency, we should choose dt for the expression below to approximate 1/2
-                self._multinomial_rates.append(sum(rates) * dt)
+                self._multinomial_rates.append(sum(infectious_rates) * dt)
 
-                flow = multinomial(self.model[src], rates * dt)
+                flow = multinomial(self.model[src], infectious_rates * dt)
 
                 state_diff[src] -= sum(flow[:-1])
 
@@ -79,11 +79,17 @@ class StochasticSimulator(Simulator):
         for t in time_index:
             simulation.loc[t, :] = self.model.state
 
-            self.model.update_state(self._diff(dt))
+            state_diff = self._diff(dt)
+
+            if self._observer is not None:
+                self._observer.observe(t, state_diff)
+
+            self.model.update_state(state_diff)
+
 
         return simulation
 
-    def simulate(self, T: int, dt: float = 0.05, n_sims: int = 10, average_sims: bool = False, aggregate_I: bool = False) -> Union[
+    def run(self, T: int, dt: float = 0.05, n_sims: int = 10, average_sims: bool = False, aggregate_I: bool = False) -> Union[
         pd.DataFrame, Collection[pd.DataFrame]]:
 
         results = []
@@ -98,7 +104,7 @@ class StochasticSimulator(Simulator):
             self._previous_simulations.append(simulation)
 
             if aggregate_I:
-                simulation = StochasticSimulator.aggregate_infection_compartments(simulation)
+                simulation = StochasticSimulation.aggregate_infection_compartments(simulation)
 
             results.append(simulation)
 
@@ -106,6 +112,6 @@ class StochasticSimulator(Simulator):
             results = results[0]
 
         if average_sims:
-            results = StochasticSimulator.average_simulations(results)
+            results = StochasticSimulation.average_simulations(results)
 
         return results

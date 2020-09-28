@@ -2,10 +2,10 @@ import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
 
-from data.synthetic.simulator.base import Simulator
+from data.synthetic.simulation.base import Simulation
 
 
-class DeterministicSimulator(Simulator):
+class DeterministicSimulation(Simulation):
     def _diff(self, _t, X):
         self.model.set_state_from_vector(X)
 
@@ -22,7 +22,7 @@ class DeterministicSimulator(Simulator):
 
         return [state_diff[comp] for comp in self.model.compartments]
 
-    def simulate(self, T: int, dt: float = 0.05) -> pd.DataFrame:
+    def run(self, T: int, dt: float = 0.05) -> pd.DataFrame:
         self.model.set_initial_state()
 
         # create the initial state vector

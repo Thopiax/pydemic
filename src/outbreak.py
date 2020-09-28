@@ -145,20 +145,23 @@ class Outbreak:
         return _ffx_index(cumulative_x, xs[0])
 
     @save_figure(lambda outbreak: f"outbreaks/{outbreak.region}.pdf")
-    def plot(self):
+    def plot(self, cumulative: bool = False):
         ax = plt.gca()
 
         plt.suptitle(self.region)
 
         ax.set_ylabel("# of people")
 
-        self.cases.plot(ax=ax, label="cases")
-        self.deaths.plot(ax=ax, label="deaths")
-        self.recoveries.plot(ax=ax, label="recoveries")
+        if cumulative:
+            self.cumulative_cases.plot(ax=ax, label="cumulative_cases")
+            self.cumulative_deaths.plot(ax=ax, label="cumulative_deaths")
+            self.cumulative_recoveries.plot(ax=ax, label="cumulative_recoveries")
+        else:
+            self.cases.plot(ax=ax, label="cases")
+            self.deaths.plot(ax=ax, label="deaths")
+            self.recoveries.plot(ax=ax, label="recoveries")
 
         plt.legend()
-
-        plt.show()
 
     @staticmethod
     def from_simulation(region, simulation, dt: float = 1.0):

@@ -70,7 +70,7 @@ class BaseResolutionDelayDistribution(ABC):
 
         if build_hazard_rate:
             # build & verify hazard rate
-            self.hazard_rate = self.build_hazard_rate(self.support, offset=self.support_offset)
+            self.hazard_rate = self.build_hazard_rate(self.support, self.incidence_rate, offset=self.support_offset)
             verify_rate(self.hazard_rate)
 
     def build_parameters(self, parameters: Iterable[float]) -> NamedTuple:

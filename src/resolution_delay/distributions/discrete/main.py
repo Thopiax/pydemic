@@ -14,7 +14,7 @@ from src.resolution_delay.distributions.base import BaseResolutionDelayDistribut
 class DiscreteResolutionDelayDistribution(BaseResolutionDelayDistribution, ABC):
     @property
     def max_ppf(self):
-        return int(self.__class__._dist.ppf(self.max_rate_ppf, *self.parameters))
+        return int(np.ceil(self.__class__._dist.ppf(self.max_rate_ppf, *self.parameters)))
 
     def build_incidence_rate(self, support: np.ndarray, **kwargs) -> pd.Series:
         return pd.Series(

@@ -5,7 +5,7 @@ import networkx as nx
 import numpy as np
 
 from .model import SEIRDModel
-from .utils import get_compartment
+from data.synthetic.utils import get_compartment, infectious_compartment_label
 from src.enums import Outcome
 
 
@@ -59,7 +59,7 @@ class InfectiousStream:
         return self.outcome_compartments(Outcome.DEATH) + self.outcome_compartments(Outcome.RECOVERY)
 
     def _compartment_label(self, outcome: Outcome, k: int):
-        return f"I_({self.index},{outcome.value},{k})"
+        return infectious_compartment_label(self.index, outcome, k)
 
     def outcome_compartments(self, outcome: Outcome):
         return [self._compartment_label(outcome, k + 1) for k in range(self.chain_parameters[outcome]["K"])]
@@ -107,13 +107,11 @@ class SEIRDBuilder:
 
     @cached_property
     def parameters(self):
-        stream_parameters = {f"stream_{s.index}": s.parameters for s in self._streams}
-
         return dict(
             N=self.N,
             alpha=self._alpha,
             D_E=self.D_E,
-            **stream_parameters
+            streams=[s.parameters for s in self._streams]
         )
 
     def _exposure_rate(self, N: int, graph: nx.DiGraph):

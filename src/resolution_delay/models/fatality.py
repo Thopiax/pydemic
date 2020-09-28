@@ -13,7 +13,6 @@ from resolution_delay.distributions.base import BaseResolutionDelayDistribution
 
 from optimization.loss import MeanAbsoluteScaledErrorLoss, BaseLoss
 from resolution_delay.models.base import BaseResolutionDelayModel
-from resolution_delay.models.utils import expected_case_outcome_lag
 
 
 class FatalityResolutionDelayModel(BaseResolutionDelayModel):
@@ -53,8 +52,12 @@ class FatalityResolutionDelayModel(BaseResolutionDelayModel):
         return None
 
     def predict(self, t: int, start: int = 0) -> np.ndarray:
-        result = np.convolve(self._cases[start:(t + 1)], self.distribution.incidence_rate, mode="same")
+        expected_case_resolutions = np.convolve(
+            self._cases[:(t + 1)],
+            self.distribution.incidence_rate,
+            mode="full"
+        )
 
-        print(result)
+        result = expected_case_resolutions[start:]
 
         return result
