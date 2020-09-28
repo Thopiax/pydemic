@@ -9,14 +9,14 @@ from cfr.estimates.base import BaseCFREstimate
 from cfr.estimates.naive import NaiveCFREstimate
 from optimization.utils import get_optimal_parameters, get_n_best_parameters
 from outbreak import Outbreak
-from outcome_lag.distributions.base import BaseOutcomeLagDistribution
+from resolution_delay.distributions.base import BaseResolutionDelayDistribution
 
 from optimization import Optimizer
 from optimization.loss import MeanAbsoluteScaledErrorLoss, BaseLoss
-from outcome_lag.models.utils import expected_case_outcome_lag
+from resolution_delay.models.utils import expected_case_outcome_lag
 
 
-class BaseOutcomeLagModel(ABC):
+class BaseResolutionDelayModel(ABC):
     name: str = "base"
 
     def __init__(self, outbreak: Outbreak, Loss: Type[BaseLoss] = MeanAbsoluteScaledErrorLoss):

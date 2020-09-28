@@ -5,10 +5,10 @@ from scipy.stats._distn_infrastructure import rv_frozen
 
 from skopt.space import Real, Integer
 
-from src.outcome_lag.distributions.continuous.main import ContinuousOutcomeLagDistribution
+from src.resolution_delay.distributions.continuous.main import ContinuousResolutionDelayDistribution
 
 
-class LognormOutcomeDistribution(ContinuousOutcomeLagDistribution):
+class LognormResolutionDelayDistribution(ContinuousResolutionDelayDistribution):
     name = "Lognormal"
     Parameters = namedtuple(name, ["mu", "sigma"])
 

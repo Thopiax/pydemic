@@ -41,4 +41,3 @@ def save_figure(dest: Union[str, callable], overwrite: bool = True):
     return decorator_save_figure
 
 
-

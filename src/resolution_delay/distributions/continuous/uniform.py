@@ -5,10 +5,10 @@ from scipy.stats._distn_infrastructure import rv_frozen
 
 from skopt.space import Real
 
-from src.outcome_lag.distributions.continuous.main import ContinuousOutcomeLagDistribution
+from src.resolution_delay.distributions.continuous.main import ContinuousResolutionDelayDistribution
 
 
-class UniformOutcomeDistribution(ContinuousOutcomeLagDistribution):
+class UniformResolutionDelayDistribution(ContinuousResolutionDelayDistribution):
     name = "Uniform"
     Parameters = namedtuple(name, ["p"])
 

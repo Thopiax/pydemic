@@ -4,7 +4,7 @@ from typing import Optional
 import numpy as np
 from abc import ABC, abstractmethod
 
-from outcome_lag.distributions.exceptions import InvalidParameterError
+from resolution_delay.distributions.exceptions import InvalidParameterError
 from sklearn.metrics import mean_absolute_error
 
 

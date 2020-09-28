@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from outcome_lag.distributions.exceptions import InvalidParameterError
+from resolution_delay.distributions.exceptions import InvalidParameterError
 
 MAX_RATE_PPF = 0.999  # only 1 in 1000 cases are not considered
 MAX_SUPPORT_SIZE = 60  # days

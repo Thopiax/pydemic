@@ -8,10 +8,10 @@ from abc import ABC
 
 from scipy.stats import rv_frozen
 
-from outcome_lag.distributions.base import BaseOutcomeLagDistribution
+from resolution_delay.distributions.base import BaseResolutionDelayDistribution
 
 
-class ContinuousOutcomeLagDistribution(BaseOutcomeLagDistribution, ABC):
+class ContinuousResolutionDelayDistribution(BaseResolutionDelayDistribution, ABC):
     def build_incidence_rate(self, support: np.ndarray, random_variable: rv_frozen, offset: float = 0.0) -> pd.Series:
         return pd.Series(
             random_variable.pdf(support + offset),

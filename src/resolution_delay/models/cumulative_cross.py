@@ -11,30 +11,30 @@ import matplotlib.pyplot as plt
 from enums import Outcome
 from optimization.utils import get_optimal_parameters
 from outbreak import Outbreak
-from outcome_lag.distributions.base import BaseOutcomeLagDistribution
+from resolution_delay.distributions.base import BaseResolutionDelayDistribution
 
 from optimization.loss import MeanAbsoluteScaledErrorLoss, BaseLoss
-from outcome_lag.distributions.discrete.negbinomial import NegBinomialOutcomeDistribution
-from outcome_lag.distributions.exceptions import InvalidParameterError
-from outcome_lag.models.base import BaseOutcomeLagModel
-from outcome_lag.models.utils import expected_case_outcome_lag
+from resolution_delay.distributions.discrete.negbinomial import NegBinomialDistribution
+from resolution_delay.distributions.exceptions import InvalidParameterError
+from resolution_delay.models.base import BaseResolutionDelayModel
+from resolution_delay.models.utils import expected_case_outcome_lag
 from utils.plot import save_figure
 
 
-class CumulativeCrossOutcomeLagModel(BaseOutcomeLagModel):
+class CumulativeCrossResolutionDelayModel(BaseResolutionDelayModel):
     name: str = "cum_XOL"
 
     def __init__(self, outbreak: Outbreak,
-                 fatality_distribution: Optional[BaseOutcomeLagDistribution] = None,
-                 recovery_distribution: Optional[BaseOutcomeLagDistribution] = None,
+                 fatality_distribution: Optional[BaseResolutionDelayDistribution] = None,
+                 recovery_distribution: Optional[BaseResolutionDelayDistribution] = None,
                  Loss: Type[BaseLoss] = MeanAbsoluteScaledErrorLoss):
         super().__init__(outbreak, Loss)
 
         self._cases = self.outbreak.cases.to_numpy()
 
         self.distributions = {
-            Outcome.DEATH: fatality_distribution or NegBinomialOutcomeDistribution(),
-            Outcome.RECOVERY: recovery_distribution or NegBinomialOutcomeDistribution()
+            Outcome.DEATH: fatality_distribution or NegBinomialDistribution(),
+            Outcome.RECOVERY: recovery_distribution or NegBinomialDistribution()
         }
 
         self.actual_observed_cumulative_outcomes = {

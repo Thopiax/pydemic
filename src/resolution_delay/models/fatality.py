@@ -9,17 +9,17 @@ from cfr.estimates.base import BaseCFREstimate
 from cfr.estimates.naive import NaiveCFREstimate
 
 from outbreak import Outbreak
-from outcome_lag.distributions.base import BaseOutcomeLagDistribution
+from resolution_delay.distributions.base import BaseResolutionDelayDistribution
 
 from optimization.loss import MeanAbsoluteScaledErrorLoss, BaseLoss
-from outcome_lag.models.base import BaseOutcomeLagModel
-from outcome_lag.models.utils import expected_case_outcome_lag
+from resolution_delay.models.base import BaseResolutionDelayModel
+from resolution_delay.models.utils import expected_case_outcome_lag
 
 
-class FatalityOutcomeLagModel(BaseOutcomeLagModel):
+class FatalityResolutionDelayModel(BaseResolutionDelayModel):
     name: str = "FOL"
 
-    def __init__(self, outbreak: Outbreak, distribution: BaseOutcomeLagDistribution,
+    def __init__(self, outbreak: Outbreak, distribution: BaseResolutionDelayDistribution,
                  Loss: Type[BaseLoss] = MeanAbsoluteScaledErrorLoss,
                  CFR_estimate: Type[BaseCFREstimate] = NaiveCFREstimate):
         super().__init__(outbreak, Loss)

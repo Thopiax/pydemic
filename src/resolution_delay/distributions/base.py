@@ -8,8 +8,8 @@ from typing import Optional, NamedTuple, Iterable, Union, List
 
 from skopt.space import Dimension
 
-from src.outcome_lag.distributions.exceptions import InvalidParameterError
-from src.outcome_lag.distributions.utils import MAX_RATE_PPF, MAX_SUPPORT_SIZE, verify_random_variable, verify_rate, \
+from src.resolution_delay.distributions.exceptions import InvalidParameterError
+from src.resolution_delay.distributions.utils import MAX_RATE_PPF, MAX_SUPPORT_SIZE, verify_random_variable, verify_rate, \
     describe
 
 
@@ -17,7 +17,7 @@ def build_support(max_support_size: int = MAX_SUPPORT_SIZE, freq: float = 1) -> 
     return np.arange(max_support_size, step=freq)
 
 
-class BaseOutcomeLagDistribution(ABC):
+class BaseResolutionDelayDistribution(ABC):
     Parameters: Optional[NamedTuple] = None
     name: str = "base"
 
@@ -66,7 +66,7 @@ class BaseOutcomeLagDistribution(ABC):
 
         self.support = build_support(max_support_size=self.max_support_size)
 
-        # build & verify outcome_lag rate
+        # build & verify resolution_delay rate
         self.incidence_rate = self.build_incidence_rate(self.support, self.random_variable, offset=self.support_offset)
         verify_rate(self.incidence_rate)
 
