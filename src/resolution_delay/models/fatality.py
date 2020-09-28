@@ -53,9 +53,8 @@ class FatalityResolutionDelayModel(BaseResolutionDelayModel):
         return None
 
     def predict(self, t: int, start: int = 0) -> np.ndarray:
-        result = np.zeros(t + 1 - start)
+        result = np.convolve(self._cases[start:(t + 1)], self.distribution.incidence_rate, mode="same")
 
-        for k in range(start, t + 1):
-            result[k - start] = expected_case_outcome_lag(k, self._cases, self.distribution.incidence_rate)
+        print(result)
 
-        return self._base_cfr_estimate.estimate(t + 1, start=start) * result
+        return result

@@ -10,8 +10,8 @@ from data.synthetic.seird import SEIRDModel
 class Simulator(ABC):
     STABILITY_THRESHOLD = 1e-8
 
-    def __init__(self, graph_model: SEIRDModel):
-        self.graph_model = graph_model
+    def __init__(self, model: SEIRDModel):
+        self.model = model
 
         self._previous_simulations = []
 
@@ -35,7 +35,7 @@ class Simulator(ABC):
 
     def _verify_stability(self, simulation: pd.DataFrame):
         # numerical stability: sum of all compartments should not deviate from N
-        assert all(abs(simulation.sum(axis=1) - self.graph_model.N) < Simulator.STABILITY_THRESHOLD)
+        assert all(abs(simulation.sum(axis=1) - self.model.parameters["N"]) < Simulator.STABILITY_THRESHOLD)
 
     @abstractmethod
     def simulate(self, T: int, dt: float = 0.05, aggregate_I: bool = False):

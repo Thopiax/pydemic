@@ -9,12 +9,13 @@ from src.resolution_delay.distributions.continuous.main import ContinuousResolut
 
 
 class UniformResolutionDelayDistribution(ContinuousResolutionDelayDistribution):
-    name = "Uniform"
-    Parameters = namedtuple(name, ["p"])
+    _dist = uniform
+    Parameters = namedtuple(_dist.name, ["p"])
 
     @property
     def dimensions(self):
         return [Real(0.0, 1.0)]
 
-    def build_random_variable(self, parameters: Parameters) -> rv_frozen:
-        return uniform(parameters.p)
+    @property
+    def shape(self):
+        return self._parameters.p

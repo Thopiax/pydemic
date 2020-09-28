@@ -165,12 +165,12 @@ class Outbreak:
         observation_index = np.arange(0, max(simulation.index), dt)
 
         def observe(col):
-            return simulation.loc[observation_index, col].diff().where(lambda s: s > 0).fillna(0).astype(int)
+            return simulation.loc[observation_index, col].diff().fillna(0).astype(int)
 
+        # perfect visibility
         deaths = observe("D")
         recoveries = observe("R")
-
-        cases = observe("I") + deaths + recoveries
+        cases = abs(observe("S"))
 
         return Outbreak(
             region,

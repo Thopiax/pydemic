@@ -6,28 +6,36 @@ import matplotlib.pyplot as plt
 
 from abc import ABC
 
-from scipy.stats import rv_frozen
+from scipy.stats._distn_infrastructure import rv_frozen
 
 from resolution_delay.distributions.base import BaseResolutionDelayDistribution
 
 
 class ContinuousResolutionDelayDistribution(BaseResolutionDelayDistribution, ABC):
-    def build_incidence_rate(self, support: np.ndarray, random_variable: rv_frozen, offset: float = 0.0) -> pd.Series:
+    @property
+    def shape(self):
+        raise NotImplementedError
+
+    @property
+    def max_ppf(self):
+        return int(self.__class__._dist.ppf(self.max_rate_ppf, self.shape, scale=self.scale))
+
+    def build_incidence_rate(self, support: np.ndarray, offset: float = 0.0) -> pd.Series:
         return pd.Series(
-            random_variable.pdf(support + offset),
+            self.__class__._dist.pdf(support + offset, self.shape, scale=self.scale),
             index=support,
             name="incidence"
         )
 
-    def build_hazard_rate(self, support: np.ndarray, random_variable: rv_frozen, incidence_rate: pd.Series,
-                          offset: float = 0.0) -> pd.Series:
+    def build_hazard_rate(self, support: np.ndarray, incidence_rate: pd.Series, offset: float = 0.0) -> pd.Series:
         return pd.Series(
-            incidence_rate / random_variable.sf(support + offset),
+            incidence_rate / self.__class__._dist.sf(support + offset, self.shape, scale=self.scale),
             index=support,
             name="hazard"
         )
 
-    def _plot_rate(self, rate, hf_support, hf_rate, color: str = "blue", label: str = "Incidence", support_offset: Optional[float] = None, **kwargs):
+    def _plot_rate(self, rate, hf_support, hf_rate, color: str = "blue", label: str = "Incidence",
+                   support_offset: Optional[float] = None, **kwargs):
         plt.gca()
 
         support = self.support
@@ -37,8 +45,7 @@ class ContinuousResolutionDelayDistribution(BaseResolutionDelayDistribution, ABC
         plt.plot(hf_support, hf_rate, label=label, c=color, alpha=0.5)
 
         # # plot probability dots
-        plt.hlines(rate, support, support_with_offset, linestyles='--',
-                   colors='red')
+        plt.hlines(rate, support, support_with_offset, linestyles='--', colors='red')
 
         plt.bar(support, rate, width=0.3, alpha=0.6, color=color)
 

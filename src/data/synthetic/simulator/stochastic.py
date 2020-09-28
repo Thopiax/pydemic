@@ -41,13 +41,13 @@ class StochasticSimulator(Simulator):
         plt.show()
 
     def _diff(self, dt: float):
-        state_diff = {comp: 0 for comp in self.graph_model.compartments}
+        state_diff = {comp: 0 for comp in self.model.compartments}
 
-        for (src, edges) in self.graph_model.transition_rates.items():
+        for (src, edges) in self.model.transition_rates.items():
             if len(edges) == 1:
                 [(dest, rate)] = edges
 
-                flow = binomial(self.graph_model[src], rate * dt)
+                flow = binomial(self.model[src], rate * dt)
 
                 # remove flow from src component
                 state_diff[src] -= flow
@@ -62,7 +62,7 @@ class StochasticSimulator(Simulator):
                 # for numerical consistency, we should choose dt for the expression below to approximate 1/2
                 self._multinomial_rates.append(sum(rates) * dt)
 
-                flow = multinomial(self.graph_model[src], rates * dt)
+                flow = multinomial(self.model[src], rates * dt)
 
                 state_diff[src] -= sum(flow[:-1])
 
@@ -74,12 +74,12 @@ class StochasticSimulator(Simulator):
     def _run_simulation(self, T: int, dt: float):
         time_index = np.arange(0, T, dt)
 
-        simulation = pd.DataFrame(index=time_index, columns=self.graph_model.compartments)
+        simulation = pd.DataFrame(index=time_index, columns=self.model.compartments)
 
         for t in time_index:
-            simulation.loc[t, :] = self.graph_model.state
+            simulation.loc[t, :] = self.model.state
 
-            self.graph_model.update_state(self._diff(dt))
+            self.model.update_state(self._diff(dt))
 
         return simulation
 
@@ -89,7 +89,7 @@ class StochasticSimulator(Simulator):
         results = []
 
         for i in range(n_sims):
-            self.graph_model.set_initial_state()
+            self.model.set_initial_state()
 
             print(f"Running simulation #{i}...")
             simulation = self._run_simulation(T, dt)

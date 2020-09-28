@@ -8,10 +8,6 @@ MAX_SUPPORT_SIZE = 60  # days
 MAX_RATE_VARIANCE = 1000  # days => std < 30 days
 
 
-def verify_random_variable(random_variable):
-    pass
-
-
 def verify_rate(rate: pd.Series):
     if np.isnan(rate).any() or np.isinf(rate).any():
         raise InvalidParameterError
