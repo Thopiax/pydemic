@@ -16,23 +16,22 @@ class ContinuousResolutionDelayDistribution(BaseResolutionDelayDistribution, ABC
     def shape(self):
         raise NotImplementedError
 
-    @property
-    def max_ppf(self):
-        return int(np.ceil(self.__class__._dist.ppf(self.max_rate_ppf, self.shape, scale=self.scale)))
-
     def build_incidence_rate(self, support: np.ndarray, offset: float = 0.0) -> pd.Series:
         return pd.Series(
-            self.__class__._dist.pdf(support + offset, self.shape, scale=self.scale),
+            self._rv.pdf(support + offset),
             index=support,
             name="incidence"
         )
 
     def build_hazard_rate(self, support: np.ndarray, incidence_rate: pd.Series, offset: float = 0.0) -> pd.Series:
         return pd.Series(
-            incidence_rate / self.__class__._dist.sf(support + offset, self.shape, scale=self.scale),
+            incidence_rate / self._rv.sf(support + offset),
             index=support,
             name="hazard"
         )
+
+    def build_random_variable(self) -> rv_frozen:
+        return self.__class__._dist(self.shape, scale=self.scale)
 
     def _plot_rate(self, rate, hf_support, hf_rate, color: str = "blue", label: str = "Incidence",
                    support_offset: Optional[float] = None, **kwargs):
@@ -50,3 +49,4 @@ class ContinuousResolutionDelayDistribution(BaseResolutionDelayDistribution, ABC
         plt.bar(support, rate, width=0.3, alpha=0.6, color=color)
 
         plt.legend()
+

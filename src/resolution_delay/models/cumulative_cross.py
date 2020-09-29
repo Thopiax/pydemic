@@ -13,7 +13,8 @@ from optimization.utils import get_optimal_parameters
 from outbreak import Outbreak
 from resolution_delay.distributions.base import BaseResolutionDelayDistribution
 
-from optimization.loss import MeanAbsoluteScaledErrorLoss, BaseLoss
+from optimization.loss import MeanAbsoluteScaledErrorLoss
+from optimization.loss.base import BaseLoss
 from resolution_delay.distributions.discrete.negbinomial import NegBinomialResolutionDelayDistribution
 from resolution_delay.distributions.exceptions import InvalidParameterError
 from resolution_delay.models.base import BaseResolutionDelayModel

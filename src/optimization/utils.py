@@ -56,3 +56,4 @@ def get_expected_minimum(result: OptimizeResult, **kwargs) -> Optional[List[floa
         return None
 
     return expected_minimum(result, **kwargs)
+

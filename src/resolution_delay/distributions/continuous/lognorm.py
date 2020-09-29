@@ -19,10 +19,10 @@ class LognormResolutionDelayDistribution(ContinuousResolutionDelayDistribution):
 
     @property
     def shape(self):
-        return self._parameters.sigma
-
-    @property
-    def shape(self):
         # parametrize lognorm in terms of the parameters of the characteristic normal distributions.
         return np.exp(self._parameters.mu)
+
+    @property
+    def scale(self):
+        return self._parameters.sigma
 

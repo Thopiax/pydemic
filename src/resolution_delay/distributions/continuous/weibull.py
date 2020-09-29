@@ -17,10 +17,10 @@ class WeibullResolutionDelayDistribution(ContinuousResolutionDelayDistribution):
         return [Real(0.0, 100.0), Real(0.0, 100.0)]
 
     @property
-    def scale(self):
+    def shape(self):
         return self.parameters.beta
 
     @property
-    def shape(self):
+    def scale(self):
         return self.parameters.eta
 

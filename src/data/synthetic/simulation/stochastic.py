@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 from numpy.random.mtrand import binomial, multinomial
 
 from data.synthetic.simulation.base import Simulation
+from data.synthetic.utils import average_dfs
 
 
 class StochasticSimulation(Simulation):
@@ -14,17 +15,6 @@ class StochasticSimulation(Simulation):
 
         self._multinomial_rates = []
 
-    @staticmethod
-    def average_simulations(simulations: Collection[pd.DataFrame]):
-        assert len(simulations) > 1
-        result = simulations[0]
-
-        for sim in simulations[1:]:
-            result.add(sim, axis=1)
-
-        result.div(float(len(simulations)))
-
-        return result
 
     @staticmethod
     def plot_all(simulations: Collection[pd.DataFrame]):
@@ -35,7 +25,7 @@ class StochasticSimulation(Simulation):
         for sim in simplified_simulations:
             sim.plot(ax=ax, color='grey', alpha=0.2, legend=False)
 
-        avg_sim = StochasticSimulation.average_simulations(simplified_simulations)
+        avg_sim = average_dfs(simplified_simulations)
         avg_sim.plot(ax=ax, linewidth=5.0)
 
         plt.show()
@@ -86,6 +76,7 @@ class StochasticSimulation(Simulation):
 
             self.model.update_state(state_diff)
 
+        self._observer.flush(T)
 
         return simulation
 
@@ -112,6 +103,6 @@ class StochasticSimulation(Simulation):
             results = results[0]
 
         if average_sims:
-            results = StochasticSimulation.average_simulations(results)
+            results = average_dfs(results)
 
         return results

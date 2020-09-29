@@ -1,11 +1,7 @@
-from functools import cached_property
-from typing import Optional
-
-import numpy as np
 from abc import ABC, abstractmethod
+from functools import cached_property
 
 from resolution_delay.distributions.exceptions import InvalidParameterError
-from sklearn.metrics import mean_absolute_error
 
 
 class BaseLoss(ABC):
@@ -45,29 +41,3 @@ class BaseLoss(ABC):
     @abstractmethod
     def _loss(self):
         raise NotImplementedError
-
-
-class MeanAbsoluteErrorLoss(BaseLoss):
-    name: str = "MAE"
-
-    def _loss(self):
-        return mean_absolute_error(self.y_true, self.y_pred, sample_weight=self.sample_weight)
-
-
-class MeanAbsoluteScaledErrorLoss(BaseLoss):
-    name: str = "MASE"
-
-    def __init__(self, model, t: int, **kwargs):
-        super().__init__(model, t, **kwargs)
-
-        self._scaling_coefficient = self.y_true.sum(axis=0)
-
-    def _loss(self):
-        loss = mean_absolute_error(
-            self.y_true,
-            self.y_pred,
-            sample_weight=self.sample_weight,
-            multioutput=(1.0 / self._scaling_coefficient)
-        )
-
-        return loss

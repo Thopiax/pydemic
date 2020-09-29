@@ -1,5 +1,13 @@
 import numpy as np
 
+from resolution_delay.distributions.exceptions import InvalidParameterError
+
+
+def verify_pred(pred: np.array):
+    if np.isnan(pred).any() or np.isinf(pred).any() or np.equal(pred, 0).all():
+        raise InvalidParameterError
+
+
 def expected_case_outcome_lag(t: int, cases: np.array, incidence_rate: np.array):
     K = min(t + 1, len(incidence_rate))
 

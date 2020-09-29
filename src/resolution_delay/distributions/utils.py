@@ -3,7 +3,7 @@ import pandas as pd
 
 from resolution_delay.distributions.exceptions import InvalidParameterError
 
-MAX_RATE_PPF = 1.0 / 10_000  # only 1 in 10_000 cases are not considered
+MAX_RATE_PPF = (10_000 - 1) / 10_000 # only 1 in 10_000 cases are not considered
 MAX_SUPPORT_SIZE = 60  # days
 MAX_RATE_VARIANCE = 1000  # days => std < 30 days
 

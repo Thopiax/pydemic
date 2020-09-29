@@ -11,7 +11,8 @@ from src.enums import Outcome
 from src.outbreak import Outbreak
 from src.resolution_delay.distributions.base import BaseResolutionDelayDistribution
 
-from src.optimization.loss import MeanAbsoluteScaledErrorLoss, BaseLoss
+from src.optimization.loss import MeanAbsoluteScaledErrorLoss
+from optimization.loss.base import BaseLoss
 from src.resolution_delay.distributions.discrete.negbinomial import NegBinomialResolutionDelayDistribution
 from src.resolution_delay.models.base import BaseResolutionDelayModel
 from src.resolution_delay.models.utils import expected_case_outcome_lag

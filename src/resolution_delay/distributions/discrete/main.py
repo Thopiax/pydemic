@@ -12,23 +12,23 @@ from src.resolution_delay.distributions.base import BaseResolutionDelayDistribut
 
 
 class DiscreteResolutionDelayDistribution(BaseResolutionDelayDistribution, ABC):
-    @property
-    def max_ppf(self):
-        return int(np.ceil(self.__class__._dist.ppf(self.max_rate_ppf, *self.parameters)))
 
     def build_incidence_rate(self, support: np.ndarray, **kwargs) -> pd.Series:
         return pd.Series(
-            self.__class__._dist.pmf(support, *self.parameters),
+            self._rv.pmf(support),
             index=support,
             name="incidence"
         )
 
     def build_hazard_rate(self, support: np.ndarray, incidence_rate: pd.Series, **kwargs) -> pd.Series:
         return pd.Series(
-            incidence_rate / self.__class__._dist.sf(support, *self.parameters),
+            incidence_rate / self._rv.sf(support),
             index=support,
             name="hazard"
         )
+
+    def build_random_variable(self) -> rv_frozen:
+        return self.__class__._dist(*self.parameters)
 
     def _plot_rate(self, rate, _support, _rate, color: str = "blue", label: str = "Incidence",
                    support_offset: Optional[float] = None, **kwargs):

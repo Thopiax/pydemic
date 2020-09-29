@@ -7,6 +7,7 @@ import pandas as pd
 from data.synthetic.simulation.base import Simulation
 from data.synthetic.utils import infectious_compartment_label
 from enums import Outcome
+from outbreak import Outbreak
 
 
 class SimulationObserver(ABC):
@@ -32,7 +33,10 @@ class SimulationObserver(ABC):
 
     def _reset_observation(self):
         self._t = 0
+
         self._state_history = pd.DataFrame(columns=self.__class__.columns)
+        # set initial state
+        self._state_history.loc[0, :] = np.zeros(len(self.__class__.columns))
 
     def _reset_state(self):
         self._state = pd.Series(data=np.zeros(len(self.__class__.columns)), index=self.__class__.columns)
@@ -54,6 +58,10 @@ class SimulationObserver(ABC):
 
         return self._observations[-1]
 
+    @staticmethod
+    def to_outbreak(observation: pd.DataFrame):
+        return Outbreak("observed", df=observation)
+
     @abstractmethod
     def _observe_state(self, state_diff: Dict[str, float]):
         pass
@@ -64,7 +72,7 @@ class SimulationObserver(ABC):
 
 
 class PerfectObserver(SimulationObserver):
-    columns = ["cases", "deaths", "recoveries", "ECR"]
+    columns = ["cases", "deaths", "recoveries"]
 
     @staticmethod
     def _observe_cases(state_diff: Dict[str, float]):
@@ -79,7 +87,6 @@ class PerfectObserver(SimulationObserver):
 
     def flush(self, T: int):
         self._observations.append(self._state_history.copy(deep=True))
-        print("flushed state_history", self._observations)
 
         self._state_history = None
 

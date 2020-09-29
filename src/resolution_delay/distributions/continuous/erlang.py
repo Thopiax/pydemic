@@ -21,5 +21,5 @@ class ErlangResolutionDelayDistribution(ContinuousResolutionDelayDistribution):
 
     @property
     def scale(self):
-        return self.parameters.theta
+        return 1 / self.parameters.theta
 

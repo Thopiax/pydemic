@@ -11,23 +11,25 @@ from cfr.estimates.naive import NaiveCFREstimate
 from outbreak import Outbreak
 from resolution_delay.distributions.base import BaseResolutionDelayDistribution
 
-from optimization.loss import MeanAbsoluteScaledErrorLoss, BaseLoss
+from optimization.loss import MeanAbsoluteScaledErrorLoss
+from optimization.loss.base import BaseLoss
+from resolution_delay.distributions.discrete.negbinomial import NegBinomialResolutionDelayDistribution
 from resolution_delay.models.base import BaseResolutionDelayModel
+from resolution_delay.models.utils import verify_pred
 
 
 class FatalityResolutionDelayModel(BaseResolutionDelayModel):
     name: str = "FOL"
 
-    def __init__(self, outbreak: Outbreak, distribution: BaseResolutionDelayDistribution,
-                 Loss: Type[BaseLoss] = MeanAbsoluteScaledErrorLoss,
-                 CFR_estimate: Type[BaseCFREstimate] = NaiveCFREstimate):
+    def __init__(self, outbreak: Outbreak, distribution: Optional[BaseResolutionDelayDistribution] = None,
+                 Loss: Type[BaseLoss] = MeanAbsoluteScaledErrorLoss):
         super().__init__(outbreak, Loss)
 
-        self.distribution = distribution
-        self._base_cfr_estimate = CFR_estimate(self.outbreak)
+        self.distribution = distribution or NegBinomialResolutionDelayDistribution()
 
-        self._cases = self.outbreak.cases.to_numpy()
-        self._target = self.outbreak.deaths.to_numpy()
+        self._target = self.outbreak.cumulative_deaths.to_numpy(dtype="float32")
+
+        self._sample_weight = (self.outbreak.cumulative_resolved_cases / self.outbreak.cumulative_cases).to_numpy(dtype="float32")
 
     @property
     def dimensions(self):
@@ -45,19 +47,35 @@ class FatalityResolutionDelayModel(BaseResolutionDelayModel):
     def cache_path(self) -> PosixPath:
         return super().cache_path / self.distribution.name
 
+    @lru_cache
     def target(self, t: int, start: int = 0) -> np.ndarray:
-        return self._target[start:(t + 1)]
+        return self._target[start:(t + 1)] - self._target[start]
 
+    @lru_cache
     def sample_weight(self, t: int, start: int = 0) -> Optional[np.ndarray]:
-        return None
+        return self._sample_weight[start:(t + 1)]
 
-    def predict(self, t: int, start: int = 0) -> np.ndarray:
+    def _calculate_cecr(self, t: int, start: int = 0):
         expected_case_resolutions = np.convolve(
             self._cases[:(t + 1)],
             self.distribution.incidence_rate,
             mode="full"
         )
 
-        result = expected_case_resolutions[start:]
+        verify_pred(expected_case_resolutions)
 
-        return result
+        return np.cumsum(expected_case_resolutions[start:(t + 1)])
+
+    def _calculate_alpha(self, t: int, start: int = 0, cecr: Optional[np.array] = None):
+        if cecr is None:
+            cecr = self._calculate_cecr(t, start=start)
+
+        return np.average(self.target(t, start=start) / cecr, weights=self.sample_weight(t, start=start))
+
+    def predict(self, t: int, start: int = 0) -> np.ndarray:
+        cecr = self._calculate_cecr(t, start=start)
+        alpha = self._calculate_alpha(t, start=start, cecr=cecr)
+
+        verify_pred(alpha * cecr)
+
+        return alpha * cecr

@@ -4,16 +4,14 @@ from pathlib import PosixPath, Path
 from typing import List, Type, Optional, Union, Tuple
 
 import numpy as np
+import matplotlib.pyplot as plt
 
-from cfr.estimates.base import BaseCFREstimate
-from cfr.estimates.naive import NaiveCFREstimate
 from optimization.utils import get_optimal_parameters, get_n_best_parameters
 from outbreak import Outbreak
-from resolution_delay.distributions.base import BaseResolutionDelayDistribution
 
 from optimization import Optimizer
-from optimization.loss import MeanAbsoluteScaledErrorLoss, BaseLoss
-from resolution_delay.models.utils import expected_case_outcome_lag
+from optimization.loss import MeanAbsoluteScaledErrorLoss
+from optimization.loss.base import BaseLoss
 
 
 class BaseResolutionDelayModel(ABC):
@@ -22,6 +20,8 @@ class BaseResolutionDelayModel(ABC):
     def __init__(self, outbreak: Outbreak, Loss: Type[BaseLoss] = MeanAbsoluteScaledErrorLoss):
         self.outbreak = outbreak
         self._Loss = Loss
+
+        self._cases = self.outbreak.cases.to_numpy(dtype="float32")
 
         self.results = {}
 
@@ -42,6 +42,15 @@ class BaseResolutionDelayModel(ABC):
             return get_optimal_parameters(optimization_result)
 
         return get_n_best_parameters(n_best_parameters, optimization_result)
+
+    def plot_prediction(self, t: int, start: int = 0):
+        ax = plt.gca()
+
+        ax.plot(np.cumsum(self._cases[start:(t + 1)]), label="cases")
+        ax.plot(self.target(t, start=start), label="true")
+        ax.plot(self.predict(t, start=start), label="prediction")
+
+        plt.legend()
 
     # ABSTRACT #
 

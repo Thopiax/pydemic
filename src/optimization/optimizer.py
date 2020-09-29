@@ -6,7 +6,7 @@ from skopt import gbrt_minimize, optimizer
 from skopt.callbacks import DeltaYStopper
 
 from optimization.cache import Cache
-from optimization.loss import BaseLoss
+from optimization.loss.base import BaseLoss
 from optimization.utils import get_initial_points
 
 

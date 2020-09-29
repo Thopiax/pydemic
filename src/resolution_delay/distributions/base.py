@@ -18,6 +18,7 @@ class BaseResolutionDelayDistribution(ABC):
     def __init__(self, *parameters, max_support_size: int = MAX_SUPPORT_SIZE,
                  max_rate_ppf: int = MAX_RATE_PPF, support_offset: float = 0.5):
         self._parameters: Optional[NamedTuple] = None
+        self._rv: Optional[rv_frozen] = None
 
         self.support: Optional[np.ndarray] = None
         self.support_offset = support_offset
@@ -32,10 +33,12 @@ class BaseResolutionDelayDistribution(ABC):
         if len(parameters) > 0:
             self.parameters = parameters
 
-    def describe_random_variable(self):
-        random_variable = self._dist(*self.parameters)
+    def describe(self):
+        return describe(self._rv) if self._rv is not None else None
 
-        return describe(random_variable)
+    @property
+    def max_ppf(self):
+        return int(np.ceil(self._rv.ppf(self.max_rate_ppf)))
 
     @property
     def scale(self):
@@ -61,6 +64,7 @@ class BaseResolutionDelayDistribution(ABC):
     def parameters(self, parameters: Iterable[float], build_hazard_rate: bool = False):
         # build & verify parameters
         self._parameters = self.build_parameters(parameters)
+        self._rv = self.build_random_variable()
 
         self.support = self.build_support()
 
@@ -95,6 +99,10 @@ class BaseResolutionDelayDistribution(ABC):
         self._plot_rate(self.hazard_rate, support, hazard_rate, label="Hazard", color="orange", **kwargs)
 
     @abstractmethod
+    def build_random_variable(self):
+        pass
+
+    @abstractmethod
     def _plot_rate(self, rate, hf_support, hf_rate, color: str = "blue", label: str = "Incidence",
                    support_offset: Optional[float] = None, **kwargs):
         raise NotImplementedError
@@ -111,7 +119,4 @@ class BaseResolutionDelayDistribution(ABC):
     def dimensions(self) -> List[Dimension]:
         raise NotImplementedError
 
-    @property
-    def max_ppf(self):
-        raise NotImplementedError
 

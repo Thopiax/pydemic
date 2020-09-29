@@ -52,9 +52,11 @@ class Outbreak:
 
     def __getitem__(self, item):
         if type(item) is slice:
+            df = self._df.drop(columns=[f"cumulative_{field}" for field in Outbreak.required_fields])
+
             return Outbreak(
                 self.region,
-                df=self._df.iloc[item]
+                df=df.iloc[item].copy()
             )
 
         return getattr(self, item)
