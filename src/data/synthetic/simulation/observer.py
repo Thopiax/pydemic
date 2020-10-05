@@ -5,8 +5,7 @@ import numpy as np
 import pandas as pd
 
 from data.synthetic.simulation.base import Simulation
-from data.synthetic.utils import infectious_compartment_label
-from enums import Outcome
+from data.synthetic.utils import average_dfs
 from outbreak import Outbreak
 
 
@@ -35,8 +34,8 @@ class SimulationObserver(ABC):
         self._t = 0
 
         self._state_history = pd.DataFrame(columns=self.__class__.columns)
-        # set initial state
-        self._state_history.loc[0, :] = np.zeros(len(self.__class__.columns))
+        # # set initial state
+        # self._state_history.loc[0, :] = np.zeros(len(self.__class__.columns))
 
     def _reset_state(self):
         self._state = pd.Series(data=np.zeros(len(self.__class__.columns)), index=self.__class__.columns)
@@ -58,9 +57,10 @@ class SimulationObserver(ABC):
 
         return self._observations[-1]
 
-    @staticmethod
-    def to_outbreak(observation: pd.DataFrame):
-        return Outbreak("observed", df=observation)
+    def to_outbreak(self, name: str):
+        df = average_dfs(self._observations)
+
+        return Outbreak(f"synth_{name}", df=df)
 
     @abstractmethod
     def _observe_state(self, state_diff: Dict[str, float]):

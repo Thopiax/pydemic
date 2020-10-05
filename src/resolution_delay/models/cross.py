@@ -13,7 +13,7 @@ from src.resolution_delay.distributions.base import BaseResolutionDelayDistribut
 
 from src.optimization.loss import MeanAbsoluteScaledErrorLoss
 from optimization.loss.base import BaseLoss
-from src.resolution_delay.distributions.discrete.negbinomial import NegBinomialResolutionDelayDistribution
+from src.resolution_delay.distributions.discrete.negative_binomial import NegativeBinomialResolutionDelayDistribution
 from src.resolution_delay.models.base import BaseResolutionDelayModel
 from src.resolution_delay.models.utils import expected_case_outcome_lag
 
@@ -30,8 +30,8 @@ class CrossResolutionDelayModel(BaseResolutionDelayModel):
         self._cases = self.outbreak.cases.to_numpy()
 
         self.distributions = {
-            Outcome.DEATH: fatality_distribution or NegBinomialResolutionDelayDistribution(),
-            Outcome.RECOVERY: recovery_distribution or NegBinomialResolutionDelayDistribution()
+            Outcome.DEATH: fatality_distribution or NegativeBinomialResolutionDelayDistribution(),
+            Outcome.RECOVERY: recovery_distribution or NegativeBinomialResolutionDelayDistribution()
         }
 
         self.actual_observed_outcomes = {

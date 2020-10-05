@@ -38,7 +38,12 @@ class BaseResolutionDelayDistribution(ABC):
 
     @property
     def max_ppf(self):
-        return int(np.ceil(self._rv.ppf(self.max_rate_ppf)))
+        ppf = self._rv.ppf(self.max_rate_ppf)
+
+        if np.isnan(ppf) or np.isinf(ppf):
+            return self.max_support_size
+
+        return max(int(np.ceil(ppf)), 1)
 
     @property
     def scale(self):

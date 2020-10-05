@@ -15,7 +15,7 @@ def expected_case_outcome_lag(t: int, cases: np.array, incidence_rate: np.array)
     cases_subset = cases[(t - K) + 1:t + 1]
 
     # reverse incidence_rate and take subset from [0, K)
-    reverse_incidence_rate = incidence_rate[K-1::-1]
+    reverse_incidence_rate = incidence_rate[K - 1::-1]
 
     return np.sum(cases_subset * reverse_incidence_rate)
 
@@ -33,3 +33,9 @@ def test_expected_case_outcome_lag():
 
     assert expected_case_outcome_lag(80, cases, incidence_rate) == (80 / 2) + (79 / 4) + (78 / 8)
 
+
+def verify_probability(prob):
+    if 0 < prob < 1:
+        return
+
+    raise InvalidParameterError

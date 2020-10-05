@@ -17,7 +17,7 @@ from optimization.loss.base import BaseLoss
 class BaseResolutionDelayModel(ABC):
     name: str = "base"
 
-    def __init__(self, outbreak: Outbreak, Loss: Type[BaseLoss] = MeanAbsoluteScaledErrorLoss):
+    def __init__(self, outbreak: Outbreak, Loss: Type[BaseLoss] = MeanAbsoluteScaledErrorLoss, **kwargs):
         self.outbreak = outbreak
         self._Loss = Loss
 
@@ -25,15 +25,19 @@ class BaseResolutionDelayModel(ABC):
 
         self.results = {}
 
+        self._optimizer_kwargs = kwargs
+
     @cached_property
     def cache_path(self) -> PosixPath:
         return Path(self.outbreak.region) / self.__class__.name
 
     def fit(self, t: int, start: int = 0, n_best_parameters=1, **kwargs) -> Union[List[float], List[Tuple[float, List[float]]]]:
         loss = self._Loss(self, t, start=start)
-        optimizer = Optimizer(self.dimensions, cache_path=self.cache_path)
+        optimizer = Optimizer(self.dimensions, cache_path=self.cache_path, **self._optimizer_kwargs)
 
-        optimization_result = optimizer.optimize(loss, **kwargs)
+        previous_parameters = self.get_previous_parameters(t, start=t)
+
+        optimization_result = optimizer.optimize(loss, initial_parameter_points=previous_parameters, **kwargs)
 
         self.results[(t, start)] = optimization_result
         self.parameters = get_optimal_parameters(optimization_result)
@@ -43,14 +47,35 @@ class BaseResolutionDelayModel(ABC):
 
         return get_n_best_parameters(n_best_parameters, optimization_result)
 
+    def get_previous_parameters(self, t: int, start: int = 0) -> np.array:
+        result = set()
+
+        for (t0, start0), val in self.results.items():
+            if t0 < t and start0 == start:
+                for _, param in get_n_best_parameters(10, val):
+                    result.add(tuple(param))
+
+        return np.array(list(result))
+
     def plot_prediction(self, t: int, start: int = 0):
         ax = plt.gca()
 
-        ax.plot(np.cumsum(self._cases[start:(t + 1)]), label="cases")
+        # ax.plot(np.cumsum(self._cases[start:(t + 1)]), label="cases")
         ax.plot(self.target(t, start=start), label="true")
         ax.plot(self.predict(t, start=start), label="prediction")
 
         plt.legend()
+
+    def get_parameters_from_cache(self, t: int, start: int = 0, n_best_parameters: int = 1):
+        loss = self._Loss(self, t, start=start)
+        optimizer = Optimizer(self.dimensions, cache_path=self.cache_path, **self._optimizer_kwargs)
+
+        cached_result = optimizer.load_cached_result(loss)
+
+        if n_best_parameters == 1:
+            return get_optimal_parameters(cached_result)
+
+        return get_n_best_parameters(n_best_parameters, cached_result)
 
     # ABSTRACT #
 
@@ -79,4 +104,8 @@ class BaseResolutionDelayModel(ABC):
 
     @abstractmethod
     def predict(self, t: int, start: int = 0) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
+    def alpha(self, t: int, start: int = 0) -> float:
         raise NotImplementedError
