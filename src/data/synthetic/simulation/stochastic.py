@@ -13,9 +13,6 @@ class StochasticSimulation(Simulation):
     def __init__(self, graph_model):
         super().__init__(graph_model)
 
-        self._multinomial_rates = []
-
-
     @staticmethod
     def plot_all(simulations: Collection[pd.DataFrame]):
         ax = plt.gca()
@@ -49,9 +46,6 @@ class StochasticSimulation(Simulation):
                 # add the last compartment as the "catchall" i.e. the probability that they stay exposed.
                 infectious_rates = np.array([rate for (_, rate) in edges] + [0])
 
-                # for numerical consistency, we should choose dt for the expression below to approximate 1/2
-                self._multinomial_rates.append(sum(infectious_rates) * dt)
-
                 flow = multinomial(self.model[src], infectious_rates * dt)
 
                 state_diff[src] -= sum(flow[:-1])
@@ -80,9 +74,7 @@ class StochasticSimulation(Simulation):
 
         return simulation
 
-    def run(self, T: int, dt: float = 0.05, n_sims: int = 10, average_sims: bool = False, aggregate_I: bool = False) -> Union[
-        pd.DataFrame, Collection[pd.DataFrame]]:
-
+    def run(self, T: int, dt: float = 0.05, n_sims: int = 10, aggregate_I: bool = False) -> Collection[pd.DataFrame]:
         results = []
 
         for i in range(n_sims):
@@ -98,11 +90,5 @@ class StochasticSimulation(Simulation):
                 simulation = StochasticSimulation.aggregate_infection_compartments(simulation)
 
             results.append(simulation)
-
-        if n_sims == 1:
-            results = results[0]
-
-        if average_sims:
-            results = average_dfs(results)
 
         return results

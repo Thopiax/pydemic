@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from functools import cached_property, lru_cache
-from pathlib import PosixPath, Path
+from pathlib import PosixPath
 from typing import List, Type, Optional, Union, Tuple
 
 import numpy as np
@@ -26,10 +25,6 @@ class BaseResolutionDelayModel(ABC):
         self.results = {}
 
         self._optimizer_kwargs = kwargs
-
-    @cached_property
-    def cache_path(self) -> PosixPath:
-        return Path(self.outbreak.region) / self.__class__.name
 
     def fit(self, t: int, start: int = 0, n_best_parameters=1, **kwargs) -> Union[List[float], List[Tuple[float, List[float]]]]:
         loss = self._Loss(self, t, start=start)
@@ -78,6 +73,11 @@ class BaseResolutionDelayModel(ABC):
         return get_n_best_parameters(n_best_parameters, cached_result)
 
     # ABSTRACT #
+
+    @property
+    @abstractmethod
+    def cache_path(self) -> PosixPath:
+        raise NotImplementedError
 
     @property
     @abstractmethod

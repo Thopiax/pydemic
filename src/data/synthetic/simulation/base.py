@@ -5,19 +5,26 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 from data.synthetic.seird import SEIRDModel
+from .observer import PerfectObserver
 
 
 class Simulation(ABC):
     STABILITY_THRESHOLD = 1e-8
 
-    def __init__(self, model: SEIRDModel):
+    def __init__(self, model: SEIRDModel, with_observer: bool = True):
         self.model = model
 
-        self._observer = None
+        self._observer = PerfectObserver(simulation=self) if with_observer else None
         self._previous_simulations = []
 
     def attach_observer(self, observer):
         self._observer = observer
+
+    @property
+    def observations(self):
+        observation_keys = [f"obs_{i}" for i in range(len(self._observer._observations))]
+
+        return pd.concat(self._observer._observations, axis=1, keys=observation_keys)
 
     @staticmethod
     def aggregate_infection_compartments(simulation: pd.DataFrame):

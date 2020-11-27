@@ -45,7 +45,7 @@ class Optimizer:
     def cache_result(self, loss: BaseLoss, result):
         return self.cache.add(f"{self.tag}_{self.acq_func}_{loss.tag}", result, to_disk=True)
 
-    def optimize(self, loss: BaseLoss, n_calls: int = 100, max_calls: int = 200, n_random_starts: int = 30,
+    def optimize(self, loss: BaseLoss, n_calls: int = 100, max_calls: int = 100, n_random_starts: int = 30,
                  use_cache=True, initial_parameter_points: Optional[np.array] = None, delta: float = 0.0,
                  random_state: int = 1, verbose=True, **kwargs):
         result = self.load_cached_result(loss)

@@ -1,5 +1,5 @@
-from abc import ABC, abstractmethod
-from functools import cached_property, lru_cache
+from abc import ABC
+from functools import lru_cache
 from pathlib import PosixPath, Path
 from typing import List, Type, Optional
 
@@ -43,8 +43,7 @@ class SingleResolutionDelayModel(BaseResolutionDelayModel, ABC):
 
     @property
     def cache_path(self) -> PosixPath:
-        # return super().cache_path / self.distribution.name
-        return Path(self.outbreak.region) / self.__class__.name / self.distribution.name
+        return Path(self.outbreak.name) / self.__class__.name / self.distribution.name
 
     @lru_cache
     def target(self, t: int, start: int = 0) -> np.ndarray:
@@ -62,9 +61,7 @@ class SingleResolutionDelayModel(BaseResolutionDelayModel, ABC):
         return self._sample_weight[start:(t + 1)]
 
     def regulizer(self, t: int, start: int = 0):
-        alpha = self.alpha(t, start=start)
-
-        return
+        return None
 
     def _calculate_cecr(self, t: int, start: int = 0):
         expected_case_resolutions = np.convolve(
